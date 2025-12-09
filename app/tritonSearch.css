@@ -55,15 +55,15 @@ body {
 }
 
 .OutputTable .valueType-equipmentType {
-    background: #efe3c3;
-    color: #000;
+    background-color: #ebf2fd;
+    color: #69717f;
 }
 .OutputTable .valueType-equipmentName {
-    background: #134490;
+    background-color: #193c64;
     color: #fff;
 }
 .OutputTable .valueType-size {
-    background: #232d67;
+    background-color: #002258;
     color: #fff;
 }
 
