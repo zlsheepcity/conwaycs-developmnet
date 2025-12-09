@@ -1,0 +1,104 @@
+/* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Demo settings */
+
+html, body {
+    margin:  0;
+    padding: 0;
+}
+body {
+    font-family: sans-serif;
+}
+.demo-intro {
+    padding: 2rem;
+    margin-bottom: 2rem;
+    background-color: hsl( 37, 55%, 85%);
+               color: hsl( 37,  4%, 48%);
+    border-bottom: 2px solid currentColor;
+}
+.demo-intro >* {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Sections */
+
+.GeneralWrap {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.form-actions {
+    padding: 2rem;
+    display: grid;
+    place-items: center;
+}
+.form-actions button {
+    font-size: 2em;
+    padding: 0.25em 0.75em;
+}
+
+.SectionResponse {
+    position: relative;
+    min-height: 9em;
+    margin-bottom: 4rem;
+}
+
+/* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ OutputTable */
+
+.OutputTable table {
+    width: 100%;
+}
+.OutputTable th,
+.OutputTable td {
+    padding: 0.5em;
+    text-align: left;
+}
+
+.OutputTable .valueType-equipmentType {
+    background: #efe3c3;
+    color: #000;
+}
+.OutputTable .valueType-equipmentName {
+    background: #134490;
+    color: #fff;
+}
+.OutputTable .valueType-size {
+    background: #232d67;
+    color: #fff;
+}
+
+/* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ LoadingOverlay */
+
+.LoadingOverlay {
+    opacity: 0;
+    pointer-events: none;
+}
+.LoadingOverlay:is(.isLoading .LoadingOverlay) {
+    opacity: 1;
+    pointer-events: all;
+}
+.LoadingOverlay {
+    position: absolute;
+    inset: 0;
+    transition: opacity 300ms ease-in;
+    background-color: hsla(0,0%,96%,0.69);
+}
+.LoadingOverlay:after {
+  --iconSize: 3em;
+    content:  '';
+    position: absolute;
+    z-index:  1;
+    left: calc( 50% - (var(--iconSize)/2) );
+    top:    var(--iconSize);
+    width:  var(--iconSize);
+    height: var(--iconSize);
+    animation: LoadingRotation 1s infinite linear;
+    background-size:  cover;
+    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="%23284d77"%3E%3Cpath d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q17 0 28.5 11.5T520-840q0 17-11.5 28.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-17 11.5-28.5T840-520q17 0 28.5 11.5T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Z"/%3E%3C/svg%3E');
+}
+@keyframes LoadingRotation {
+    from {transform: rotate(0deg);}
+    to   {transform: rotate(359deg);}
+}
+
+/* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ End */

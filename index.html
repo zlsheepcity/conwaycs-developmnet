@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>conwaycs development</title>
+    <meta name="description" content="htmltest">
+    <meta name="theme-color" content="#314159">
+    <link rel="icon" type="image/png" href="art/icon512.png">
+
+    <link
+        href="app/tritonSearch.css"
+        type="text/css" rel="stylesheet" media="all">
+
+</head>
+<body>
+
+    <header class="demo-intro">
+        <h1>Dev prototype v2025.12.09.15:00</h1>
+        <h3>Abstract</h3>
+        <p>
+            Get data from the API by given options and display output table.
+        </p>
+        <p>
+            This demo is connected to the <i>inventory</i> endpoint. Output table columns are selected randomly for demonstration.
+        </p>
+        <p>
+            Created for conwaycs.com
+        </p>
+    </header>
+
+    <section id="GeneralWrap" class="GeneralWrap">
+
+        <section id="SectionRequest" class="SectionRequest">
+
+            <fieldset>
+                <label for="value-country">
+                    Country:
+                </label>
+                <select name="country" id="value-country">
+                    <option value="LV" selected>Latvia, LV</option>
+                    <option value="CA">Canada, CA</option>
+                </select>
+            </fieldset>
+
+            <fieldset>
+                <label for="value-port">
+                    Port:
+                </label>
+                <select name="port" id="value-port">
+                    <option value="" selected>- any -</option>
+                </select>
+            </fieldset>
+
+            <fieldset>
+                <label for="value-currency">
+                    Currency:
+                </label>
+                <select name="currency" id="value-currency">
+                    <option value="" selected>- any -</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                </select>
+            </fieldset>
+
+            <section class="form-actions">
+                <button id="ButtonRunSearch">Search</button>
+            </section>
+        </section>
+
+        <section id="SectionResponse" class="SectionResponse">
+            <div class="LoadingOverlay"></div>
+            <div id="OutputTable" class="OutputTable"></div>
+        </section>
+    </section>
+
+
+    <script script-library src="app/tritonSearch.js"></script>
+    <script script-dom>
+        const DOM =(
+            extract => list => list.reduce(extract, {})
+        )(
+            (c,key)=>({...c,[key]:document.getElementById(key)})
+        )(
+            [
+                'GeneralWrap',
+                'SectionRequest',
+                'SectionResponse',
+                'OutputTable',
+                'ButtonRunSearch',
+
+                'value-country',
+                'value-port',
+                'value-currency',
+            ]
+        );
+    </script>
+    <script script-controller>
+        startUI(DOM);
+
+        //console.log('start');
+        //getDataInventory();
+    </script>
+
+
+</body>
+</html>

@@ -1,0 +1,181 @@
+// Version: 2025.12.09
+// Status: Draft
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Config
+
+const config = {
+
+    apiUrlBase: 'https://api.trtn.com/triton/api/v1/',
+    apiToken: 'eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJUcml0b24iLCJzdWIiOiJXRUJBRE1JTiIsImlhdCI6MTc2NDE0NTE3OCwic3lzdGVtX3Rva2VuIjp0cnVlfQ.zpSVrFW8weF9upyAYr07-r3ZX8dbc7_v1GIMm5nQlFM', // DEV TOKEN, 2025.12.09
+
+    outputColumns: [
+        {
+            key:   'port',
+            label: 'Port',
+        },
+        {
+            key:   'portName',
+            label: 'Port Name',
+        },
+        {
+            key:   'depot',
+            label: 'Depot',
+        },
+        {
+            key:   'depotName',
+            label: 'Depot Name',
+        },
+        {
+            key:   'equipmentType',
+            label: 'Equipment Type',
+        },
+        {
+            key:   'equipmentName',
+            label: 'Equipment Name',
+        },
+        {
+            key:   'size',
+            label: 'Size',
+        },
+        {
+            key:   'available',
+            label: 'Available',
+        },
+        {
+            key:   'price',
+            label: 'Price',
+        },
+        {
+            key:   'currency',
+            label: 'Currency',
+        },
+    ],
+
+};
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Fetchers
+
+async function fetchDataInventory(searchQuery = {}) {
+
+    // prepare request
+    const query = new URLSearchParams(searchQuery);
+    const url = `${config.apiUrlBase}inventory?${query}`;
+    const method = 'GET';
+    const headers = {
+        'Content-Type':  'application/json',
+        'Authorization': `Bearer ${config.apiToken}`
+    }
+
+    // fetch data
+    let result = [];
+    try {
+
+        const response = await fetch(url, {method, headers});
+        if (response.ok) {
+            result = await response.json();
+        }
+
+    } catch (error) {
+        console.error(error.message);
+    };
+
+    // finish
+    return result;
+};
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Controllers
+
+async function runSearch({DOM}) {
+
+    // start
+    setLoadingEnabled(DOM);
+
+    // data
+    const searchQuery = readFormValues(DOM);
+    const result = await fetchDataInventory(searchQuery);
+
+    // render
+    if (result && result.length) {
+        renderOutputTable(DOM, result);
+    };
+
+    // finish
+    setLoadingDisabled(DOM);
+};
+
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ UI
+
+function setLoadingEnabled({GeneralWrap}) {
+    GeneralWrap.classList.add('isLoading');
+};
+function setLoadingDisabled({GeneralWrap}) {
+    GeneralWrap.classList.remove('isLoading');
+};
+
+function readFormValues(DOM) {
+    return {
+        'country':  DOM['value-country'].value || 'CA', // required
+        'port':     DOM['value-port'].value || '',
+        'currency': DOM['value-currency'].value || '',
+    };
+};
+
+function startUI(DOM) {
+
+    // main form action
+    const {ButtonRunSearch} = DOM;
+    ButtonRunSearch.addEventListener(
+        'click', event => {
+            runSearch({DOM});
+        }
+    );
+
+};
+
+function renderOutputTable(
+    {OutputTable},
+    data = [{}]
+) {
+
+    // workers
+
+    function makeRowCaption() {
+        const row = document.createElement('TR');
+        config.outputColumns.forEach(column => {
+            const cell = document.createElement('TH');
+            cell.textContent = column.label;
+            row.appendChild(cell);
+        });
+        return row;
+    };
+    function makeRowValues(item = {}) {
+        const row = document.createElement('TR');
+        config.outputColumns.forEach(column => {
+            const key  = column.key;
+            const cell = document.createElement('TD');
+            cell.classList.add(`valueType-${key}`);
+            cell.textContent = item[key] || '-';
+            row.appendChild(cell);
+        });
+        return row;
+    };
+
+    // render procedure
+
+    const fragment = document.createDocumentFragment();
+    const table    = document.createElement('TABLE');
+    const tbody    = document.createElement('TBODY');
+
+    tbody.appendChild( makeRowCaption() );
+    data.forEach(item => {
+        tbody.appendChild( makeRowValues(item) );
+    });
+
+    table.appendChild(tbody);
+    fragment.appendChild(table);
+    OutputTable.replaceChildren(fragment);
+
+    // finish render
+    return table;
+};
