@@ -8,50 +8,60 @@ const config = {
     apiUrlBase: 'https://api.trtn.com/triton/api/v1/',
     apiToken: 'eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJUcml0b24iLCJzdWIiOiJXRUJBRE1JTiIsImlhdCI6MTc2NDE0NTE3OCwic3lzdGVtX3Rva2VuIjp0cnVlfQ.zpSVrFW8weF9upyAYr07-r3ZX8dbc7_v1GIMm5nQlFM', // DEV TOKEN, 2025.12.09
 
-    outputColumns: [
-        {
-            key:   'port',
-            label: 'Port',
-        },
-        {
-            key:   'portName',
-            label: 'Port Name',
-        },
-        {
-            key:   'depot',
-            label: 'Depot',
-        },
-        {
-            key:   'depotName',
-            label: 'Depot Name',
-        },
-        {
-            key:   'equipmentType',
-            label: 'Equipment Type',
-        },
-        {
-            key:   'equipmentName',
-            label: 'Equipment Name',
-        },
-        {
-            key:   'size',
-            label: 'Size',
-        },
-        {
-            key:   'available',
-            label: 'Available',
-        },
-        {
-            key:   'price',
-            label: 'Price',
-        },
-        {
-            key:   'currency',
-            label: 'Currency',
-        },
-    ],
+    updatePrice: price => {
+        if (!!Number(price)) {
+            price = price * 115 / 100; // add 15%
+            price = Math.round(price/10) * 10; // round by 10
+        }
+        return price;
+    },
 
 };
+
+config.outputColumns = [
+    {
+        key:   'port',
+        label: 'Port',
+    },
+    {
+        key:   'portName',
+        label: 'Port Name',
+    },
+    {
+        key:   'depot',
+        label: 'Depot',
+    },
+    {
+        key:   'depotName',
+        label: 'Depot Name',
+    },
+    {
+        key:   'equipmentType',
+        label: 'Equipment Type',
+    },
+    {
+        key:   'equipmentName',
+        label: 'Equipment Name',
+    },
+    {
+        key:   'size',
+        label: 'Size',
+    },
+    {
+        key:   'available',
+        label: 'Available',
+    },
+    {
+        key:   'price',
+        label: 'Price',
+        getValue: rowData => config.updatePrice(rowData['price']),
+    },
+    {
+        key:   'currency',
+        label: 'Currency',
+    },
+];
+
 
 //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Fetchers
 
@@ -116,7 +126,6 @@ function setLoadingDisabled({GeneralWrap}) {
 function readFormValues(DOM) {
     return {
         'country':  DOM['value-country'].value || 'CA', // required
-        'port':     DOM['value-port'].value || '',
         'currency': DOM['value-currency'].value || '',
     };
 };
@@ -155,7 +164,11 @@ function renderOutputTable(
             const key  = column.key;
             const cell = document.createElement('TD');
             cell.classList.add(`valueType-${key}`);
-            cell.textContent = item[key] || '-';
+            if (item[key] && typeof column.getValue === 'function') {
+                cell.innerHTML = column.getValue(item);
+            } else {
+                cell.textContent = item[key] || '-';
+            }
             row.appendChild(cell);
         });
         return row;

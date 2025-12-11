@@ -16,17 +16,18 @@
 <body>
 
     <header class="demo-intro">
-        <h1>Dev prototype v2025.12.09.15:00</h1>
+        <h1>Dev prototype v2025.12.10</h1>
         <h3>Abstract</h3>
         <p>
             Get data from the API by given options and display output table.
         </p>
         <p>
-            This demo is connected to the <i>inventory</i> endpoint. Output table columns are selected randomly for demonstration.
-        </p>
-        <p>
             Created for conwaycs.com
         </p>
+        <h3>Latest updates</h3>
+        <ul>
+            <li>Price modifier (+15%, round by 10)</li>
+        </ul>
     </header>
 
     <section id="GeneralWrap" class="GeneralWrap">
@@ -44,22 +45,12 @@
             </fieldset>
 
             <fieldset>
-                <label for="value-port">
-                    Port:
-                </label>
-                <select name="port" id="value-port">
-                    <option value="" selected>- any -</option>
-                </select>
-            </fieldset>
-
-            <fieldset>
                 <label for="value-currency">
                     Currency:
                 </label>
                 <select name="currency" id="value-currency">
-                    <option value="" selected>- any -</option>
+                    <option value="EUR" selected>EUR</option>
                     <option value="USD">USD</option>
-                    <option value="EUR">EUR</option>
                 </select>
             </fieldset>
 
@@ -90,7 +81,6 @@
                 'ButtonRunSearch',
 
                 'value-country',
-                'value-port',
                 'value-currency',
             ]
         );
