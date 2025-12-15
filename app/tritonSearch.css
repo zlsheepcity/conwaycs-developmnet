@@ -48,24 +48,42 @@ body {
 .OutputTable table {
     width: 100%;
 }
+.OutputTable th {
+    white-space: nowrap;
+}
 .OutputTable th,
 .OutputTable td {
     padding: 0.5em;
     text-align: left;
 }
 
-.OutputTable .valueType-equipmentType {
-    background-color: #ebf2fd;
-    color: #69717f;
-}
-.OutputTable .valueType-equipmentName {
+.OutputTable .row-message {
+    text-align: center;
     background-color: #193c64;
     color: #fff;
 }
-.OutputTable .valueType-size {
+
+.OutputTable td.valueType-depot,
+.OutputTable td.valueType-depotName {
+    background-color: #ebf2fd;
+    color: #39414f;
+}
+.OutputTable td.valueType-equipmentName,
+.OutputTable td.valueType-size,
+.OutputTable td.valueType-categoryName {
+    background-color: #193c64;
+    color: #fff;
+}
+.OutputTable td.valueType-available {
     background-color: #002258;
     color: #fff;
 }
+
+.OutputTable .valueType-available,
+.OutputTable .valueType-price {
+    text-align: right;
+}
+
 
 /* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ LoadingOverlay */
 

@@ -19,6 +19,9 @@ const config = {
 };
 
 config.outputColumns = [
+
+    // Location
+
     {
         key:   'port',
         label: 'Port',
@@ -35,18 +38,20 @@ config.outputColumns = [
         key:   'depotName',
         label: 'Depot Name',
     },
-    {
-        key:   'equipmentType',
-        label: 'Equipment Type',
-    },
+
+    // Product
+
     {
         key:   'equipmentName',
-        label: 'Equipment Name',
+        label: 'Product Type',
     },
     {
-        key:   'size',
-        label: 'Size',
+        key:   'categoryName',
+        label: 'Category',
     },
+
+    // Order details
+
     {
         key:   'available',
         label: 'Available',
@@ -54,11 +59,14 @@ config.outputColumns = [
     {
         key:   'price',
         label: 'Price',
-        getValue: rowData => config.updatePrice(rowData['price']),
-    },
-    {
-        key:   'currency',
-        label: 'Currency',
+        getValue: rowData => {
+            const showPrice = config.updatePrice(rowData['price']);
+            if (!!Number(showPrice)) {
+                return `${showPrice} ${rowData['currency']}`;
+            } else {
+                return '-'; // Not available
+            }
+        },
     },
 ];
 
@@ -105,7 +113,7 @@ async function runSearch({DOM}) {
     const result = await fetchDataInventory(searchQuery);
 
     // render
-    if (result && result.length) {
+    if (result) {
         renderOutputTable(DOM, result);
     };
 
@@ -142,53 +150,74 @@ function startUI(DOM) {
 
 };
 
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ UI Render
+
 function renderOutputTable(
     {OutputTable},
-    data = [{}]
+    data = []
 ) {
+    const fragment = document.createDocumentFragment();
+    const table    = document.createElement('TABLE');
+    const thead    = document.createElement('THEAD');
+    const tbody    = document.createElement('TBODY');
+    const messageEmpty = 'Nothing found';
 
-    // workers
+    // table head
 
-    function makeRowCaption() {
-        const row = document.createElement('TR');
-        config.outputColumns.forEach(column => {
-            const cell = document.createElement('TH');
-            cell.textContent = column.label;
-            row.appendChild(cell);
+    thead.appendChild( makeRowCaption() );
+
+    // table content
+
+    if (data && data.length) {
+        data.forEach(item => {
+            tbody.appendChild( makeRowValues(item) );
         });
-        return row;
-    };
-    function makeRowValues(item = {}) {
-        const row = document.createElement('TR');
-        config.outputColumns.forEach(column => {
-            const key  = column.key;
-            const cell = document.createElement('TD');
-            cell.classList.add(`valueType-${key}`);
-            if (item[key] && typeof column.getValue === 'function') {
-                cell.innerHTML = column.getValue(item);
-            } else {
-                cell.textContent = item[key] || '-';
-            }
-            row.appendChild(cell);
-        });
-        return row;
-    };
+    } else {
+        tbody.appendChild( makeRowMessage(messageEmpty) );
+    }
 
     // render procedure
 
-    const fragment = document.createDocumentFragment();
-    const table    = document.createElement('TABLE');
-    const tbody    = document.createElement('TBODY');
-
-    tbody.appendChild( makeRowCaption() );
-    data.forEach(item => {
-        tbody.appendChild( makeRowValues(item) );
-    });
-
+    table.appendChild(thead);
     table.appendChild(tbody);
     fragment.appendChild(table);
     OutputTable.replaceChildren(fragment);
 
     // finish render
     return table;
+};
+
+function makeRowCaption() {
+    const row = document.createElement('TR');
+    config.outputColumns.forEach(column => {
+        const cell = document.createElement('TH');
+        cell.classList.add(`valueType-${column.key}`);
+        cell.textContent = column.label;
+        row.appendChild(cell);
+    });
+    return row;
+};
+function makeRowValues(item = {}) {
+    const row = document.createElement('TR');
+    config.outputColumns.forEach(column => {
+        const key  = column.key;
+        const cell = document.createElement('TD');
+        cell.classList.add(`valueType-${key}`);
+        if (item[key] && typeof column.getValue === 'function') {
+            cell.innerHTML = column.getValue(item);
+        } else {
+            cell.textContent = item[key] || '-';
+        }
+        row.appendChild(cell);
+    });
+    return row;
+};
+function makeRowMessage(message = '') {
+    const row = document.createElement('TR');
+    const cell = document.createElement('TD');
+    cell.setAttribute('colspan', config.outputColumns.length);
+    cell.classList.add('row-message');
+    cell.innerHTML = message;
+    row.appendChild(cell);
+    return row;
 };
