@@ -43,12 +43,24 @@ config.outputColumns = [
 
     {
         key:   'equipmentName',
-        label: 'Product Type',
+        label: 'Product',
     },
     {
         key:   'categoryName',
         label: 'Category',
     },
+//    {
+//        key:   'equipmentOptions',
+//        label: 'Options',
+//        getValue: rowData => {
+//            const list = rowData['equipmentOptions'];
+//            if (list.length) {
+//                return list.join(', ');
+//            } else {
+//                return '-';
+//            }
+//        },
+//    },
 
     // Order details
 
@@ -67,6 +79,10 @@ config.outputColumns = [
                 return '-'; // Not available
             }
         },
+    },
+    {
+        key:   'action',
+        label: '',
     },
 ];
 
@@ -205,6 +221,8 @@ function makeRowValues(item = {}) {
         cell.classList.add(`valueType-${key}`);
         if (item[key] && typeof column.getValue === 'function') {
             cell.innerHTML = column.getValue(item);
+        } else if (key === 'action') {
+            cell.appendChild( makeRequestButton(item) );
         } else {
             cell.textContent = item[key] || '-';
         }
@@ -220,4 +238,12 @@ function makeRowMessage(message = '') {
     cell.innerHTML = message;
     row.appendChild(cell);
     return row;
+};
+function makeRequestButton(item = {}) {
+    const button = document.createElement('button');
+    button.id = `row-action-${item.id}`;
+    button.classList.add('row-action');
+    button.dataset.id = item.id;
+    button.innerHTML = 'Request';
+    return button;
 };

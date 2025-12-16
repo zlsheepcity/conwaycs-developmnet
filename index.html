@@ -16,7 +16,7 @@
 <body>
 
     <header class="demo-intro">
-        <h1>Dev prototype v2025.12.14</h1>
+        <h1>Dev prototype v2025.12.15</h1>
         <h3>Abstract</h3>
         <p>
             Get data from the API by given options and display output table.
@@ -29,6 +29,8 @@
             <li>Price modifier (+15%, round by 10)</li>
             <li>List of countries (source: triton container sales portal</li>
             <li>«Nothing found» message (example: Serbia)</li>
+            <li>Filter checkboxes</li>
+            <li>Request buttons</li>
         </ul>
     </header>
 
@@ -109,6 +111,156 @@
                     <option value="EUR" selected>EUR</option>
                     <option value="USD">USD</option>
                 </select>
+            </fieldset>
+
+            <fieldset>
+                <h4>
+                    Product type:
+                </h4>
+                <label>
+                    <input type="checkbox"
+                        name="value-type-dv"
+                        id="c-value-type-dv"
+                        value="DV"
+                        />
+                    Dry Van
+                </label>
+                <label>
+                    <input type="checkbox"
+                        name="value-type-rf"
+                        id="c-value-type-rf"
+                        value="RF"
+                        />
+                    Reefer
+                </label>
+                <label>
+                    <input type="checkbox"
+                        name="value-type-ot"
+                        id="c-value-type-ot"
+                        value="OT"
+                        />
+                    Open Top
+                </label>
+                <label>
+                    <input type="checkbox"
+                        name="value-type-fr"
+                        id="c-value-type-fr"
+                        value="FR"
+                        />
+                    Flat Rack
+                </label>
+                <label>
+                    <input type="checkbox"
+                        name="value-type-dd"
+                        id="c-value-type-dd"
+                        value="DD"
+                        />
+                    Double Door
+                </label>
+            </fieldset>
+
+            <fieldset>
+                <h4>
+                    Product Size:
+                </h4>
+                <label>
+                    <input type="checkbox"
+                        name="value-size-20"
+                        id="c-value-size-20"
+                        value="20"
+                        />
+                    20FT
+                </label>
+                <label>
+                    <input type="checkbox"
+                        name="value-size-20hc"
+                        id="c-value-size-20hc"
+                        value="20HC"
+                        />
+                    20FT High Cube
+                </label>
+                <label>
+                    <input type="checkbox"
+                        name="value-size-40"
+                        id="c-value-size-40"
+                        value="40"
+                        />
+                    40FT
+                </label>
+                <label>
+                    <input type="checkbox"
+                        name="value-size-40hc"
+                        id="c-value-size-40hc"
+                        value="40HC"
+                        />
+                    40FT High Cube
+                </label>
+                <label>
+                    <input type="checkbox"
+                        name="value-size-40pw"
+                        id="c-value-size-40pw"
+                        value="40PW"
+                        />
+                    40FT Pallet Wide
+                </label>
+                <label>
+                    <input type="checkbox"
+                        name="value-size-45pw"
+                        id="c-value-size-45pw"
+                        value="45PW"
+                        />
+                    45FT Pallet Wide
+                </label>
+                <label>
+                    <input type="checkbox"
+                        name="value-size-45hc"
+                        id="c-value-size-45hc"
+                        value="45HC"
+                        />
+                    45FT High Cube
+                </label>
+                <label>
+                    <input type="checkbox"
+                        name="value-size-45hcpw"
+                        id="c-value-size-45hcpw"
+                        value="45HCPW"
+                        />
+                    45FT High Cube Pallet Wide
+                </label>
+            </fieldset>
+
+            <fieldset>
+                <h4>
+                    Base Category:
+                </h4>
+                <label>
+                    <input type="checkbox"
+                        name="value-category-IICX"
+                        value="IICX"
+                        />
+                    IICL New
+                </label>
+                <label>
+                    <input type="checkbox"
+                        name="value-category-IICA"
+                        value="IICA"
+                        />
+                    IICL Used
+                </label>
+                <label>
+                    <input type="checkbox"
+                        name="value-category-CWCA"
+                        value="CWCA"
+                        />
+                    Cargoworthy (or Roadworthy for chassis)
+                </label>
+                <label>
+                    <input type="checkbox"
+                        name="value-category-AICU"
+                        value="AICU"
+                        />
+                    As-Is (Ex-Service)
+                </label>
             </fieldset>
 
             <section class="form-actions">

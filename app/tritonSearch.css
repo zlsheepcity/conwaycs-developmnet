@@ -68,6 +68,7 @@ body {
     background-color: #ebf2fd;
     color: #39414f;
 }
+.OutputTable td.valueType-equipmentOptions,
 .OutputTable td.valueType-equipmentName,
 .OutputTable td.valueType-size,
 .OutputTable td.valueType-categoryName {
@@ -82,6 +83,10 @@ body {
 .OutputTable .valueType-available,
 .OutputTable .valueType-price {
     text-align: right;
+}
+
+.OutputTable .valueType-price {
+    white-space: nowrap;
 }
 
 
