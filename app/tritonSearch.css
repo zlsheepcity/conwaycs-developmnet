@@ -43,6 +43,61 @@ body {
     margin-bottom: 4rem;
 }
 
+/* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Select */
+
+.SelectArea {
+    display: flex;
+    flex-direction: row;
+    gap: 2em;
+    margin-bottom: 2em;
+}
+
+.select-item label {
+    font-weight: bolder;
+}
+
+.select-item select {
+    padding: 0.25em;
+}
+
+/* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Filter */
+
+.FilterArea {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    grid-gap: 2em;
+}
+.FilterArea input.is-dirty {
+    opacity: 0.69;
+}
+
+.filter-group {
+    padding-bottom: 1em;
+}
+.filter-group-caption {
+    font-weight: bolder;
+    padding-bottom: 0.25em;
+    border-bottom:  1px solid #193c64;
+    margin-bottom:  0.25em;
+}
+.filter-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+}
+.filter-list-item {
+    display: flex;
+    flex-direction: row;
+    gap: 0.25em;
+}
+.filter-list-item input {
+    align-self: start;
+}
+.filter-list-item label {
+    align-self: end;
+}
+
+
 /* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ OutputTable */
 
 .OutputTable table {

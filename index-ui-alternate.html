@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>conwaycs development</title>
+    <meta name="description" content="htmltest">
+    <meta name="theme-color" content="#314159">
+    <link rel="icon" type="image/png" href="art/icon512.png">
+
+    <link
+        href="app/tritonSearch.css"
+        type="text/css" rel="stylesheet" media="all">
+
+</head>
+<body>
+
+    <header class="demo-intro">
+        <h1>Dev prototype v2025.12.15</h1>
+        <h3>Abstract</h3>
+        <p>
+            Get data from the API by given options and display output table.
+        </p>
+        <p>
+            Created for conwaycs.com
+        </p>
+    </header>
+
+    <section id="GeneralWrap" class="GeneralWrap">
+
+        <section id="SectionRequest" class="SectionRequest">
+
+            <fieldset>
+                <label for="value-country">
+                    Country:
+                </label>
+                <select name="country" id="value-country">
+                    <option value="AR" selected>Argentina, AR</option>
+                    <option value="AU">Australia, AU</option>
+                    <option value="AT">Austria, AT</option>
+                    <option value="BE">Belgium, BE</option>
+                    <option value="BR">Brazil, BR</option>
+                    <option value="KH">Cambodia, KH</option>
+                    <option value="CM">Cameroon, CM</option>
+                    <option value="CA">Canada, CA</option>
+                    <option value="CL">Chile, CL</option>
+                    <option value="CN">China, CN</option>
+                    <option value="CR">Costa Rica, CR</option>
+                    <option value="CI">Cote D'Ivoire, CI</option>
+                    <option value="CZ">Czech Republic, CZ</option>
+                    <option value="DK">Denmark, DK</option>
+                    <option value="EC">Ecuador, EC</option>
+                    <option value="FJ">Fiji, FJ</option>
+                    <option value="FI">Finland, FI</option>
+                    <option value="FR">France, FR</option>
+                    <option value="DE">Germany, DE</option>
+                    <option value="GR">Greece, GR</option>
+                    <option value="HU">Hungary, HU</option>
+                    <option value="IN">India, IN</option>
+                    <option value="ID">Indonesia, ID</option>
+                    <option value="IE">Ireland, IE</option>
+                    <option value="IT">Italy, IT</option>
+                    <option value="JP">Japan, JP</option>
+                    <option value="KE">Kenya, KE</option>
+                    <option value="KR">Korea, KR</option>
+                    <option value="LV">Latvia, LV</option>
+                    <option value="LT">Lithuania, LT</option>
+                    <option value="MY">Malaysia, MY</option>
+                    <option value="MU">Mauritius, MU</option>
+                    <option value="MX">Mexico, MX</option>
+                    <option value="NA">Namibia, NA</option>
+                    <option value="NL">Netherlands, NL</option>
+                    <option value="NZ">New Zealand, NZ</option>
+                    <option value="NG">Nigeria, NG</option>
+                    <option value="PL">Poland, PL</option>
+                    <option value="PT">Portugal, PT</option>
+                    <option value="SA">Saudi Arabia, SA</option>
+                    <option value="SN">Senegal, SN</option>
+                    <option value="RS">Serbia, RS</option>
+                    <option value="SL">Sierra Leone, SL</option>
+                    <option value="SG">Singapore, SG</option>
+                    <option value="ZA">South Africa, ZA</option>
+                    <option value="ES">Spain, ES</option>
+                    <option value="LK">Sri Lanka, LK</option>
+                    <option value="SE">Sweden, SE</option>
+                    <option value="CH">Switzerland, CH</option>
+                    <option value="TW">Taiwan, R.O.C., TW</option>
+                    <option value="TZ">Tanzania, TZ</option>
+                    <option value="TH">Thailand, TH</option>
+                    <option value="TR">Turkey, TR</option>
+                    <option value="AE">United Arab Emirates, AE</option>
+                    <option value="GB">United Kingdom, GB</option>
+                    <option value="US">United States, US</option>
+                    <option value="VN">Vietnam, VN</option>
+                </select>
+            </fieldset>
+
+            <fieldset>
+                <label for="value-currency">
+                    Currency:
+                </label>
+                <select name="currency" id="value-currency">
+                    <option value="EUR" selected>EUR</option>
+                    <option value="USD">USD</option>
+                </select>
+            </fieldset>
+
+            <section class="FilterArea">
+                <section class="filter-group">
+                    <div class="filter-group-caption">
+                        Product Type:
+                    </div>
+                    <div class="filter-list" id="FilterProductType"></div>
+                </section>
+                <section class="filter-group">
+                    <div class="filter-group-caption">
+                        Product Size:
+                    </div>
+                    <div class="filter-list" id="FilterProductSize"></div>
+                </section>
+                <section class="filter-group">
+                    <div class="filter-group-caption">
+                        Base Category:
+                    </div>
+                    <div class="filter-list" id="FilterProductCategory"></div>
+                </section>
+            </section>
+
+            <section class="form-actions">
+                <button id="ButtonRunSearch">Search</button>
+            </section>
+        </section>
+
+        <section id="SectionResponse" class="SectionResponse">
+            <div class="LoadingOverlay"></div>
+            <div id="OutputTable" class="OutputTable"></div>
+        </section>
+    </section>
+
+
+    <script script-library src="app/tritonSearch.js"></script>
+    <script script-dom>
+        const DOM =(
+            extract => list => list.reduce(extract, {})
+        )(
+            (c,key)=>({...c,[key]:document.getElementById(key)})
+        )(
+            [
+                'GeneralWrap',
+                'SectionRequest',
+                'SectionResponse',
+                'OutputTable',
+                'ButtonRunSearch',
+
+                'value-country',
+                'value-currency',
+
+                'FilterProductType',
+                'FilterProductSize',
+                'FilterProductCategory',
+            ]
+        );
+    </script>
+    <script script-controller>
+        startUI(DOM);
+
+        //console.log('start');
+        //getDataInventory();
+    </script>
+
+
+</body>
+</html>

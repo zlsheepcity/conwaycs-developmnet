@@ -24,248 +24,146 @@
         <p>
             Created for conwaycs.com
         </p>
-        <h3>Latest updates</h3>
-        <ul>
-            <li>Price modifier (+15%, round by 10)</li>
-            <li>List of countries (source: triton container sales portal</li>
-            <li>«Nothing found» message (example: Serbia)</li>
-            <li>Filter checkboxes</li>
-            <li>Request buttons</li>
-        </ul>
     </header>
+
+    <!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Content -->
 
     <section id="GeneralWrap" class="GeneralWrap">
 
         <section id="SectionRequest" class="SectionRequest">
 
-            <fieldset>
-                <label for="value-country">
-                    Country:
-                </label>
-                <select name="country" id="value-country">
-                    <option value="AR" selected>Argentina, AR</option>
-                    <option value="AU">Australia, AU</option>
-                    <option value="AT">Austria, AT</option>
-                    <option value="BE">Belgium, BE</option>
-                    <option value="BR">Brazil, BR</option>
-                    <option value="KH">Cambodia, KH</option>
-                    <option value="CM">Cameroon, CM</option>
-                    <option value="CA">Canada, CA</option>
-                    <option value="CL">Chile, CL</option>
-                    <option value="CN">China, CN</option>
-                    <option value="CR">Costa Rica, CR</option>
-                    <option value="CI">Cote D'Ivoire, CI</option>
-                    <option value="CZ">Czech Republic, CZ</option>
-                    <option value="DK">Denmark, DK</option>
-                    <option value="EC">Ecuador, EC</option>
-                    <option value="FJ">Fiji, FJ</option>
-                    <option value="FI">Finland, FI</option>
-                    <option value="FR">France, FR</option>
-                    <option value="DE">Germany, DE</option>
-                    <option value="GR">Greece, GR</option>
-                    <option value="HU">Hungary, HU</option>
-                    <option value="IN">India, IN</option>
-                    <option value="ID">Indonesia, ID</option>
-                    <option value="IE">Ireland, IE</option>
-                    <option value="IT">Italy, IT</option>
-                    <option value="JP">Japan, JP</option>
-                    <option value="KE">Kenya, KE</option>
-                    <option value="KR">Korea, KR</option>
-                    <option value="LV">Latvia, LV</option>
-                    <option value="LT">Lithuania, LT</option>
-                    <option value="MY">Malaysia, MY</option>
-                    <option value="MU">Mauritius, MU</option>
-                    <option value="MX">Mexico, MX</option>
-                    <option value="NA">Namibia, NA</option>
-                    <option value="NL">Netherlands, NL</option>
-                    <option value="NZ">New Zealand, NZ</option>
-                    <option value="NG">Nigeria, NG</option>
-                    <option value="PL">Poland, PL</option>
-                    <option value="PT">Portugal, PT</option>
-                    <option value="SA">Saudi Arabia, SA</option>
-                    <option value="SN">Senegal, SN</option>
-                    <option value="RS">Serbia, RS</option>
-                    <option value="SL">Sierra Leone, SL</option>
-                    <option value="SG">Singapore, SG</option>
-                    <option value="ZA">South Africa, ZA</option>
-                    <option value="ES">Spain, ES</option>
-                    <option value="LK">Sri Lanka, LK</option>
-                    <option value="SE">Sweden, SE</option>
-                    <option value="CH">Switzerland, CH</option>
-                    <option value="TW">Taiwan, R.O.C., TW</option>
-                    <option value="TZ">Tanzania, TZ</option>
-                    <option value="TH">Thailand, TH</option>
-                    <option value="TR">Turkey, TR</option>
-                    <option value="AE">United Arab Emirates, AE</option>
-                    <option value="GB">United Kingdom, GB</option>
-                    <option value="US">United States, US</option>
-                    <option value="VN">Vietnam, VN</option>
-                </select>
-            </fieldset>
+            <article class="SelectArea">
 
-            <fieldset>
-                <label for="value-currency">
-                    Currency:
-                </label>
-                <select name="currency" id="value-currency">
-                    <option value="EUR" selected>EUR</option>
-                    <option value="USD">USD</option>
-                </select>
-            </fieldset>
+                <section class="select-item">
+                    <label for="value-country">
+                        Port Country:
+                    </label>
+                    <select name="country" id="value-country">
+                        <option value="" selected></option>
+                        <option value="AR">Argentina, AR</option>
+                        <option value="AU">Australia, AU</option>
+                        <option value="AT">Austria, AT</option>
+                        <option value="BE">Belgium, BE</option>
+                        <option value="BR">Brazil, BR</option>
+                        <option value="KH">Cambodia, KH</option>
+                        <option value="CM">Cameroon, CM</option>
+                        <option value="CA">Canada, CA</option>
+                        <option value="CL">Chile, CL</option>
+                        <option value="CN">China, CN</option>
+                        <option value="CR">Costa Rica, CR</option>
+                        <option value="CI">Cote D'Ivoire, CI</option>
+                        <option value="CZ">Czech Republic, CZ</option>
+                        <option value="DK">Denmark, DK</option>
+                        <option value="EC">Ecuador, EC</option>
+                        <option value="FJ">Fiji, FJ</option>
+                        <option value="FI">Finland, FI</option>
+                        <option value="FR">France, FR</option>
+                        <option value="DE">Germany, DE</option>
+                        <option value="GR">Greece, GR</option>
+                        <option value="HU">Hungary, HU</option>
+                        <option value="IN">India, IN</option>
+                        <option value="ID">Indonesia, ID</option>
+                        <option value="IE">Ireland, IE</option>
+                        <option value="IT">Italy, IT</option>
+                        <option value="JP">Japan, JP</option>
+                        <option value="KE">Kenya, KE</option>
+                        <option value="KR">Korea, KR</option>
+                        <option value="LV">Latvia, LV</option>
+                        <option value="LT">Lithuania, LT</option>
+                        <option value="MY">Malaysia, MY</option>
+                        <option value="MU">Mauritius, MU</option>
+                        <option value="MX">Mexico, MX</option>
+                        <option value="NA">Namibia, NA</option>
+                        <option value="NL">Netherlands, NL</option>
+                        <option value="NZ">New Zealand, NZ</option>
+                        <option value="NG">Nigeria, NG</option>
+                        <option value="PL">Poland, PL</option>
+                        <option value="PT">Portugal, PT</option>
+                        <option value="SA">Saudi Arabia, SA</option>
+                        <option value="SN">Senegal, SN</option>
+                        <option value="RS">Serbia, RS</option>
+                        <option value="SL">Sierra Leone, SL</option>
+                        <option value="SG">Singapore, SG</option>
+                        <option value="ZA">South Africa, ZA</option>
+                        <option value="ES">Spain, ES</option>
+                        <option value="LK">Sri Lanka, LK</option>
+                        <option value="SE">Sweden, SE</option>
+                        <option value="CH">Switzerland, CH</option>
+                        <option value="TW">Taiwan, R.O.C., TW</option>
+                        <option value="TZ">Tanzania, TZ</option>
+                        <option value="TH">Thailand, TH</option>
+                        <option value="TR">Turkey, TR</option>
+                        <option value="AE">United Arab Emirates, AE</option>
+                        <option value="GB">United Kingdom, GB</option>
+                        <option value="US">United States, US</option>
+                        <option value="VN">Vietnam, VN</option>
+                    </select>
+                </section>
 
-            <fieldset>
-                <h4>
-                    Product type:
-                </h4>
-                <label>
-                    <input type="checkbox"
-                        name="value-type-dv"
-                        id="c-value-type-dv"
-                        value="DV"
-                        />
-                    Dry Van
-                </label>
-                <label>
-                    <input type="checkbox"
-                        name="value-type-rf"
-                        id="c-value-type-rf"
-                        value="RF"
-                        />
-                    Reefer
-                </label>
-                <label>
-                    <input type="checkbox"
-                        name="value-type-ot"
-                        id="c-value-type-ot"
-                        value="OT"
-                        />
-                    Open Top
-                </label>
-                <label>
-                    <input type="checkbox"
-                        name="value-type-fr"
-                        id="c-value-type-fr"
-                        value="FR"
-                        />
-                    Flat Rack
-                </label>
-                <label>
-                    <input type="checkbox"
-                        name="value-type-dd"
-                        id="c-value-type-dd"
-                        value="DD"
-                        />
-                    Double Door
-                </label>
-            </fieldset>
+                <section class="select-item">
+                    <label for="value-currency">
+                        Display Currency:
+                    </label>
+                    <select name="currency" id="value-currency">
+                        <option value="EUR" selected>EUR</option>
+                        <option value="USD">USD</option>
+                    </select>
+                </section>
 
-            <fieldset>
-                <h4>
-                    Product Size:
-                </h4>
-                <label>
-                    <input type="checkbox"
-                        name="value-size-20"
-                        id="c-value-size-20"
-                        value="20"
-                        />
-                    20FT
-                </label>
-                <label>
-                    <input type="checkbox"
-                        name="value-size-20hc"
-                        id="c-value-size-20hc"
-                        value="20HC"
-                        />
-                    20FT High Cube
-                </label>
-                <label>
-                    <input type="checkbox"
-                        name="value-size-40"
-                        id="c-value-size-40"
-                        value="40"
-                        />
-                    40FT
-                </label>
-                <label>
-                    <input type="checkbox"
-                        name="value-size-40hc"
-                        id="c-value-size-40hc"
-                        value="40HC"
-                        />
-                    40FT High Cube
-                </label>
-                <label>
-                    <input type="checkbox"
-                        name="value-size-40pw"
-                        id="c-value-size-40pw"
-                        value="40PW"
-                        />
-                    40FT Pallet Wide
-                </label>
-                <label>
-                    <input type="checkbox"
-                        name="value-size-45pw"
-                        id="c-value-size-45pw"
-                        value="45PW"
-                        />
-                    45FT Pallet Wide
-                </label>
-                <label>
-                    <input type="checkbox"
-                        name="value-size-45hc"
-                        id="c-value-size-45hc"
-                        value="45HC"
-                        />
-                    45FT High Cube
-                </label>
-                <label>
-                    <input type="checkbox"
-                        name="value-size-45hcpw"
-                        id="c-value-size-45hcpw"
-                        value="45HCPW"
-                        />
-                    45FT High Cube Pallet Wide
-                </label>
-            </fieldset>
+            </article>
 
-            <fieldset>
-                <h4>
-                    Base Category:
-                </h4>
-                <label>
-                    <input type="checkbox"
-                        name="value-category-IICX"
-                        value="IICX"
-                        />
-                    IICL New
-                </label>
-                <label>
-                    <input type="checkbox"
-                        name="value-category-IICA"
-                        value="IICA"
-                        />
-                    IICL Used
-                </label>
-                <label>
-                    <input type="checkbox"
-                        name="value-category-CWCA"
-                        value="CWCA"
-                        />
-                    Cargoworthy (or Roadworthy for chassis)
-                </label>
-                <label>
-                    <input type="checkbox"
-                        name="value-category-AICU"
-                        value="AICU"
-                        />
-                    As-Is (Ex-Service)
-                </label>
-            </fieldset>
+            <article class="FilterArea">
 
-            <section class="form-actions">
-                <button id="ButtonRunSearch">Search</button>
-            </section>
+                <section class="filter-group">
+                    <div class="filter-group-caption filter-list-item">
+                        <input
+                            type="checkbox"
+                            value="all"
+                            id="MasterFilterProductType"
+                            />
+                        <label for="MasterFilterProductType">
+                            Product Type
+                        </label>
+                    </div>
+                    <div class="filter-list" id="FilterProductType"></div>
+                </section>
+
+                <section class="filter-group">
+                    <div class="filter-group-caption filter-list-item">
+                        <input
+                            type="checkbox"
+                            value="all"
+                            id="MasterFilterProductSize"
+                            />
+                        <label for="MasterFilterProductSize">
+                            Product Size
+                        </label>
+                    </div>
+                    <div class="filter-list" id="FilterProductSize"></div>
+                </section>
+
+                <section class="filter-group">
+                    <div class="filter-group-caption filter-list-item">
+                        <input
+                            type="checkbox"
+                            value="all"
+                            id="MasterFilterProductCategory"
+                            />
+                        <label for="MasterFilterProductCategory">
+                            Base Category
+                        </label>
+                    </div>
+                    <div class="filter-list" id="FilterProductCategory"></div>
+                </section>
+
+            </article>
+
+            <article class="form-actions">
+                <button id="ButtonRunSearch" disabled>
+                    Search
+                </button>
+            </article>
+
         </section>
 
         <section id="SectionResponse" class="SectionResponse">
@@ -274,6 +172,7 @@
         </section>
     </section>
 
+    <!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Scripts -->
 
     <script script-library src="app/tritonSearch.js"></script>
     <script script-dom>
@@ -291,16 +190,22 @@
 
                 'value-country',
                 'value-currency',
+
+                'MasterFilterProductType',
+                'MasterFilterProductSize',
+                'MasterFilterProductCategory',
+
+                'FilterProductType',
+                'FilterProductSize',
+                'FilterProductCategory',
             ]
         );
     </script>
     <script script-controller>
         startUI(DOM);
-
-        //console.log('start');
-        //getDataInventory();
     </script>
 
+    <!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ End -->
 
 </body>
 </html>
