@@ -1,5 +1,5 @@
-// Version: 2025.12.09
-// Status: Draft
+// Version: 2025.12.16
+// Status: Pre-release
 
 //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Config
 
@@ -15,6 +15,9 @@ const config = {
         }
         return price;
     },
+
+    messageTableIsEmpty: 'Nothing found',
+    textRequestButton: 'Request',
 
 };
 
@@ -97,6 +100,7 @@ config.outputColumns = [
         label: '',
     },
 
+    // End of list
 ];
 
 
@@ -128,6 +132,37 @@ async function fetchDataInventory(searchQuery = {}) {
 
     // finish
     return result;
+};
+
+function filterFetchedRecords(records = []) {
+    const filterValues = {
+        productGroup: getCheckboxGroupValues('FilterProductType'),
+        size:         getCheckboxGroupValues('FilterProductSize'),
+        baseCategory: getCheckboxGroupValues('FilterProductCategory'),
+    };
+    const filterEnabled = Object.keys(filterValues).reduce(
+        (count, key) => count + filterValues[key].length,
+        0
+    ) > 0;
+
+    // ALL ARE UNCHECKED same as ALL ARE CHECKED for better usability
+    if (!filterEnabled) return records;
+
+    const checkField = (record, key) => {
+        if (!filterValues[key].length) return true; // no filtering
+        if  (filterValues[key].includes(record[key])) return true;
+        else return false;
+    };
+    const checkRecord = (record) => Object.keys(filterValues).reduce(
+        (pass, key) => pass && checkField(record, key)
+        , true
+    );
+    const listReducer = (list, item) => [
+        ...list,
+        ...(checkRecord(item) ? [item] : [])
+    ];
+
+    return [...records].reduce(listReducer, []);
 };
 
 //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Controllers
@@ -184,9 +219,9 @@ async function runSearch({DOM}) {
     setLoadingEnabled(DOM);
 
     // data
-    const searchQuery = readFormValues(DOM);
-    const resultRaw = await fetchDataInventory(searchQuery);
-    const result = filterFetchedRecords(resultRaw);
+    const searchQuery = {...getFormValues(DOM)};
+    const resultRaw   = await fetchDataInventory(searchQuery);
+    const result      = filterFetchedRecords(resultRaw);
 
     // render
     renderOutputTable(DOM, result);
@@ -195,84 +230,23 @@ async function runSearch({DOM}) {
     setLoadingDisabled(DOM);
 };
 
-function filterFetchedRecords(records = []) {
-    const filterValues = {
-        productGroup: getCheckboxGroupValues('FilterProductType'),
-        size:         getCheckboxGroupValues('FilterProductSize'),
-        baseCategory: getCheckboxGroupValues('FilterProductCategory'),
-    };
-    const filterEnabled = Object.keys(filterValues).reduce(
-        (count, key) => count + filterValues[key].length,
-        0
-    ) > 0;
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Request Button
 
-    // ALL ARE UNCHECKED same as ALL ARE CHECKED for better usability
-    if (!filterEnabled) return records;
-
-    const checkField = (record, key) => {
-        if (!filterValues[key].length) return true; // no filtering
-        if  (filterValues[key].includes(record[key])) return true;
-        else return false;
-    };
-    const checkRecord = (record) => Object.keys(filterValues).reduce(
-        (pass, key) => pass && checkField(record, key)
-        , true
-    );
-    const listReducer = (list, item) => [
-        ...list,
-        ...(checkRecord(item) ? [item] : [])
-    ];
-
-    return [...records].reduce(listReducer, []);
-}
-
-function runApplyFilter({DOM}) {
-    const filterValues = readFilterValues(DOM);
-    const filterEnabled = Object.keys(filterValues).reduce(
-        (count, key) => count + filterValues[key].length,
-        0
-    ) > 0;
-    const rows = getRowsForFiltering(DOM);
-    if (rows.length && filterEnabled) {
-        rows.forEach(row => {
-            const pass = compareRowForFiltering(row, filterValues);
-            if (pass) console.log('pass', row.dataset['FilterProductType']);
-        });
-    };
-
-
-};
-
-//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Filtering
-
-function getRowsForFiltering({OutputTable}) {
-    const tbody = OutputTable.getElementsByTagName('tbody')[0];
-    return [...tbody.getElementsByTagName('tr')];
-};
-function updateRowForFiltering(row, item) {
-    row.dataset.id = item.id;
-    row.dataset['FilterProductType']     = item.productGroup;
-    row.dataset['FilterProductSize']     = item.size;
-    row.dataset['FilterProductCategory'] = item.baseCategory;
-};
-function compareRowForFiltering(row, filter) {
-    return Object.keys(filter).reduce(
-        (pass, key) => pass || filter[key].includes(row.dataset[key]),
-        false
-    );
+function applyRequestButtonAction({button, item}) {
+    button.addEventListener('click', event => {
+        console.group('Request button pressed');
+        console.log('Raw data:', item)
+        console.groupEnd();
+    });
 };
 
 //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ UI
 
-function setLoadingEnabled({GeneralWrap}) {
-    GeneralWrap.classList.add('isLoading');
-};
-function setLoadingDisabled({GeneralWrap}) {
-    GeneralWrap.classList.remove('isLoading');
-};
-
-function setActionsDisabledStatus(DOM, isDisabled) {
-    DOM['ButtonRunSearch'].disabled = isDisabled;
+function getFormValues(DOM) {
+    return {
+        'country':  DOM['value-country'].value || '',
+        'currency': DOM['value-currency'].value || '',
+    };
 };
 
 function getCheckboxGroupValues(group = '') {
@@ -307,31 +281,15 @@ function setCheckboxMasterDirtyStatus(group = '', isDirty = true) {
     else         master.classList.remove('is-dirty');
 };
 
-function readFormValues(DOM) {
-    return {
-        'country':  DOM['value-country'].value || '',
-        'currency': DOM['value-currency'].value || '',
-    };
+function setLoadingEnabled({GeneralWrap}) {
+    GeneralWrap.classList.add('isLoading');
+};
+function setLoadingDisabled({GeneralWrap}) {
+    GeneralWrap.classList.remove('isLoading');
 };
 
-function DEPECATEDreadFilterValues(DOM) {
-    const filterValues = {
-        FilterProductType: [],
-        FilterProductSize: [],
-        FilterProductCategory: [],
-    };
-
-    Object.keys(filterValues).forEach(groupKey => {
-        config[groupKey].forEach(item => {
-            const checkboxId = makeCheckboxId(groupKey, item.key);
-            const checkbox = document.getElementById(checkboxId);
-            if (checkbox && checkbox.checked && checkbox.value) {
-                filterValues[groupKey].push(checkbox.value);
-            };
-        });
-    });
-
-    return filterValues;
+function setActionsDisabledStatus(DOM, isDisabled) {
+    DOM['ButtonRunSearch'].disabled = isDisabled;
 };
 
 //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Render Filter
@@ -343,19 +301,11 @@ function renderFilterGroup(DOM, GroupKey = '') {
         wrap.classList.add('filter-list-item');
         wrap.appendChild(checkbox);
         wrap.appendChild(label);
-        DOM[GroupKey].appendChild(wrap);
-
         checkbox.addEventListener('change', event => {
             setCheckboxMasterDirtyStatus(GroupKey, true);
         });
+        DOM[GroupKey].appendChild(wrap);
     });
-};
-
-function makeCheckboxMasterId(groupKey) {
-    return `Master${groupKey}`;
-};
-function makeCheckboxId(groupKey, itemKey) {
-    return `filterbox-${groupKey}-${itemKey}`;
 };
 
 function makeCheckboxElements(
@@ -376,6 +326,13 @@ function makeCheckboxElements(
     return {checkbox, label};
 };
 
+function makeCheckboxMasterId(groupKey) {
+    return `Master${groupKey}`;
+};
+function makeCheckboxId(groupKey, itemKey) {
+    return `filterbox-${groupKey}-${itemKey}`;
+};
+
 //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Render Table
 
 function renderOutputTable(
@@ -387,7 +344,7 @@ function renderOutputTable(
     const thead    = document.createElement('THEAD');
     const tbody    = document.createElement('TBODY');
     const tfoot    = document.createElement('TFOOT');
-    const messageEmpty = 'Nothing found';
+    const {messageTableIsEmpty} = config;
 
     // table head
 
@@ -397,10 +354,10 @@ function renderOutputTable(
 
     if (data && data.length) {
         data.forEach(item => {
-            tbody.appendChild( makeRowValues(item) );
+            tbody.appendChild( makeRowContent(item) );
         });
     } else {
-        tfoot.appendChild( makeRowMessage(messageEmpty) );
+        tfoot.appendChild( makeRowMessage(messageTableIsEmpty) );
     }
 
     // render procedure
@@ -425,7 +382,7 @@ function makeRowCaption() {
     });
     return row;
 };
-function makeRowValues(item = {}) {
+function makeRowContent(item = {}) {
     const row = document.createElement('TR');
     config.outputColumns.forEach(column => {
         const key  = column.key;
@@ -440,7 +397,6 @@ function makeRowValues(item = {}) {
         }
         row.appendChild(cell);
     });
-    updateRowForFiltering(row, item);
     return row;
 };
 function makeRowMessage(message = '') {
@@ -453,10 +409,13 @@ function makeRowMessage(message = '') {
     return row;
 };
 function makeRequestButton(item = {}) {
-    const button = document.createElement('button');
+    const button = document.createElement('BUTTON');
     button.id = `row-action-${item.id}`;
-    button.classList.add('row-action');
+    button.classList.add('request-action');
     button.dataset.id = item.id;
-    button.innerHTML = 'Request';
+    button.innerHTML = config.textRequestButton;
+    applyRequestButtonAction({button, item});
     return button;
 };
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ End of script
