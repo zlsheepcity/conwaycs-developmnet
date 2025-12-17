@@ -1,0 +1,775 @@
+<!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Content -->
+
+<section id="GeneralWrap" class="GeneralWrap">
+
+    <section id="SectionRequest" class="SectionRequest">
+
+        <article class="SelectArea">
+
+            <section class="select-item">
+                <label for="value-country">
+                    Port Country:
+                </label>
+                <select name="country" id="value-country">
+                    <option value="" selected></option>
+                    <option value="AR">Argentina, AR</option>
+                    <option value="AU">Australia, AU</option>
+                    <option value="AT">Austria, AT</option>
+                    <option value="BE">Belgium, BE</option>
+                    <option value="BR">Brazil, BR</option>
+                    <option value="KH">Cambodia, KH</option>
+                    <option value="CM">Cameroon, CM</option>
+                    <option value="CA">Canada, CA</option>
+                    <option value="CL">Chile, CL</option>
+                    <option value="CN">China, CN</option>
+                    <option value="CR">Costa Rica, CR</option>
+                    <option value="CI">Cote D'Ivoire, CI</option>
+                    <option value="CZ">Czech Republic, CZ</option>
+                    <option value="DK">Denmark, DK</option>
+                    <option value="EC">Ecuador, EC</option>
+                    <option value="FJ">Fiji, FJ</option>
+                    <option value="FI">Finland, FI</option>
+                    <option value="FR">France, FR</option>
+                    <option value="DE">Germany, DE</option>
+                    <option value="GR">Greece, GR</option>
+                    <option value="HU">Hungary, HU</option>
+                    <option value="IN">India, IN</option>
+                    <option value="ID">Indonesia, ID</option>
+                    <option value="IE">Ireland, IE</option>
+                    <option value="IT">Italy, IT</option>
+                    <option value="JP">Japan, JP</option>
+                    <option value="KE">Kenya, KE</option>
+                    <option value="KR">Korea, KR</option>
+                    <option value="LV">Latvia, LV</option>
+                    <option value="LT">Lithuania, LT</option>
+                    <option value="MY">Malaysia, MY</option>
+                    <option value="MU">Mauritius, MU</option>
+                    <option value="MX">Mexico, MX</option>
+                    <option value="NA">Namibia, NA</option>
+                    <option value="NL">Netherlands, NL</option>
+                    <option value="NZ">New Zealand, NZ</option>
+                    <option value="NG">Nigeria, NG</option>
+                    <option value="PL">Poland, PL</option>
+                    <option value="PT">Portugal, PT</option>
+                    <option value="SA">Saudi Arabia, SA</option>
+                    <option value="SN">Senegal, SN</option>
+                    <option value="RS">Serbia, RS</option>
+                    <option value="SL">Sierra Leone, SL</option>
+                    <option value="SG">Singapore, SG</option>
+                    <option value="ZA">South Africa, ZA</option>
+                    <option value="ES">Spain, ES</option>
+                    <option value="LK">Sri Lanka, LK</option>
+                    <option value="SE">Sweden, SE</option>
+                    <option value="CH">Switzerland, CH</option>
+                    <option value="TW">Taiwan, R.O.C., TW</option>
+                    <option value="TZ">Tanzania, TZ</option>
+                    <option value="TH">Thailand, TH</option>
+                    <option value="TR">Turkey, TR</option>
+                    <option value="AE">United Arab Emirates, AE</option>
+                    <option value="GB">United Kingdom, GB</option>
+                    <option value="US">United States, US</option>
+                    <option value="VN">Vietnam, VN</option>
+                </select>
+            </section>
+
+            <section class="select-item">
+                <label for="value-currency">
+                    Display Currency:
+                </label>
+                <select name="currency" id="value-currency">
+                    <option value="EUR" selected>EUR</option>
+                    <option value="USD">USD</option>
+                </select>
+            </section>
+
+        </article>
+
+        <article class="FilterArea">
+
+            <section class="filter-group">
+                <div class="filter-group-caption filter-list-item">
+                    <input
+                        type="checkbox"
+                        value="all"
+                        id="MasterFilterProductType"
+                        />
+                    <label for="MasterFilterProductType">
+                        Product Type
+                    </label>
+                </div>
+                <div class="filter-list" id="FilterProductType"></div>
+            </section>
+
+            <section class="filter-group">
+                <div class="filter-group-caption filter-list-item">
+                    <input
+                        type="checkbox"
+                        value="all"
+                        id="MasterFilterProductSize"
+                        />
+                    <label for="MasterFilterProductSize">
+                        Product Size
+                    </label>
+                </div>
+                <div class="filter-list" id="FilterProductSize"></div>
+            </section>
+
+            <section class="filter-group">
+                <div class="filter-group-caption filter-list-item">
+                    <input
+                        type="checkbox"
+                        value="all"
+                        id="MasterFilterProductCategory"
+                        />
+                    <label for="MasterFilterProductCategory">
+                        Base Category
+                    </label>
+                </div>
+                <div class="filter-list" id="FilterProductCategory"></div>
+            </section>
+
+        </article>
+
+        <article class="form-actions">
+            <button id="ButtonRunSearch" disabled>
+                Search
+            </button>
+        </article>
+
+    </section>
+
+    <section id="SectionResponse" class="SectionResponse">
+        <div class="LoadingOverlay"></div>
+        <div id="OutputTable" class="OutputTable"></div>
+    </section>
+</section>
+
+<!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Scripts -->
+
+<script script-library>
+// Version: 2025.12.16
+// Status: Pre-release
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Config
+
+const config = {
+
+    apiUrlBase: 'https://api.trtn.com/triton/api/v1/',
+    apiToken: 'eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJUcml0b24iLCJzdWIiOiJXRUJBRE1JTiIsImlhdCI6MTc2NDE0NTE3OCwic3lzdGVtX3Rva2VuIjp0cnVlfQ.zpSVrFW8weF9upyAYr07-r3ZX8dbc7_v1GIMm5nQlFM', // DEV TOKEN, 2025.12.09
+
+    updatePrice: price => {
+        if (!!Number(price)) {
+            price = price * 115 / 100; // add 15%
+            price = Math.round(price/10) * 10; // round by 10
+        }
+        return price;
+    },
+
+    messageTableIsEmpty: 'Nothing found',
+    textRequestButton: 'Request',
+
+};
+
+config.FilterProductType = [
+    { key: 'DV', label: 'Dry Van' },
+    { key: 'RF', label: 'Reefer' },
+    { key: 'OT', label: 'Open Top' },
+    { key: 'FR', label: 'Flat Rack' },
+    { key: 'DD', label: 'Double Door' },
+];
+config.FilterProductSize = [
+    { key: '20', label: '20FT' },
+    { key: '20HC', label: '20FT High Cube' },
+    { key: '40', label: '40FT' },
+    { key: '40HC', label: '40FT High Cube' },
+    { key: '40PW', label: '40FT Pallet Wide' },
+    { key: '45HC', label: '45FT High Cube' },
+    { key: '45PW', label: '45FT Pallet Wide' },
+    { key: '45HCPW', label: '45FT High Cube Pallet Wide' },
+];
+config.FilterProductCategory = [
+    { key: 'IICX', label: 'IICL New' },
+    { key: 'IICA', label: 'IICL Used' },
+    { key: 'CWCA', label: 'Cargoworthy (or Roadworthy for chassis)' },
+    { key: 'AICU', label: 'As-Is (Ex-Service)' },
+];
+
+config.outputColumns = [
+
+    // Location
+
+    {
+        key:   'port',
+        label: 'Port',
+    },
+    {
+        key:   'portName',
+        label: 'Port Name',
+    },
+    {
+        key:   'depot',
+        label: 'Depot',
+    },
+    {
+        key:   'depotName',
+        label: 'Depot Name',
+    },
+
+    // Product
+
+    {
+        key:   'equipmentName',
+        label: 'Product',
+    },
+    {
+        key:   'categoryName',
+        label: 'Category',
+    },
+
+    // Order
+
+    {
+        key:   'available',
+        label: 'Available',
+    },
+    {
+        key:   'price',
+        label: 'Price',
+        getValue: rowData => {
+            const showPrice = config.updatePrice(rowData['price']);
+            if (!!Number(showPrice)) {
+                return `${showPrice} ${rowData['currency']}`;
+            } else {
+                return 'N/A'; // Not available
+            }
+        },
+    },
+    {
+        key:   'action',
+        label: '',
+    },
+
+    // End of list
+];
+
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Fetchers
+
+async function fetchDataInventory(searchQuery = {}) {
+
+    // prepare request
+    const query = new URLSearchParams(searchQuery);
+    const url = `${config.apiUrlBase}inventory?${query}`;
+    const method = 'GET';
+    const headers = {
+        'Content-Type':  'application/json',
+        'Authorization': `Bearer ${config.apiToken}`
+    }
+
+    // fetch data
+    let result = [];
+    try {
+
+        const response = await fetch(url, {method, headers});
+        if (response.ok) {
+            result = await response.json();
+        }
+
+    } catch (error) {
+        console.error(error.message);
+    };
+
+    // finish
+    return result;
+};
+
+function filterFetchedRecords(records = []) {
+    const filterValues = {
+        productGroup: getCheckboxGroupValues('FilterProductType'),
+        size:         getCheckboxGroupValues('FilterProductSize'),
+        baseCategory: getCheckboxGroupValues('FilterProductCategory'),
+    };
+    const filterEnabled = Object.keys(filterValues).reduce(
+        (count, key) => count + filterValues[key].length,
+        0
+    ) > 0;
+
+    // ALL ARE UNCHECKED same as ALL ARE CHECKED for better usability
+    if (!filterEnabled) return records;
+
+    const checkField = (record, key) => {
+        if (!filterValues[key].length) return true; // no filtering
+        if  (filterValues[key].includes(record[key])) return true;
+        else return false;
+    };
+    const checkRecord = (record) => Object.keys(filterValues).reduce(
+        (pass, key) => pass && checkField(record, key)
+        , true
+    );
+    const listReducer = (list, item) => [
+        ...list,
+        ...(checkRecord(item) ? [item] : [])
+    ];
+
+    return [...records].reduce(listReducer, []);
+};
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Controllers
+
+function startUI(DOM) {
+
+    // filters
+
+    renderFilterGroup(DOM, 'FilterProductType');
+    renderFilterGroup(DOM, 'FilterProductSize');
+    renderFilterGroup(DOM, 'FilterProductCategory');
+
+    const {
+        MasterFilterProductType,
+        MasterFilterProductSize,
+        MasterFilterProductCategory,
+    } = DOM;
+
+    MasterFilterProductType.addEventListener('change', event => {
+        setCheckboxGroupMasterValues('FilterProductType');
+    });
+    MasterFilterProductSize.addEventListener('change', event => {
+        setCheckboxGroupMasterValues('FilterProductSize');
+    });
+    MasterFilterProductCategory.addEventListener('change', event => {
+        setCheckboxGroupMasterValues('FilterProductCategory');
+    });
+
+    // main events
+
+    const {
+        ButtonRunSearch,
+        'value-country': SelectCountry,
+    } = DOM;
+
+    SelectCountry.addEventListener('change', event => {
+        setActionsDisabledStatus(DOM, !SelectCountry.value)
+    });
+
+    ButtonRunSearch.addEventListener('click', event => {
+        runSearch({DOM});
+    });
+
+    // initial state
+
+    setActionsDisabledStatus(DOM, true);
+    console.log('All good!')
+
+};
+
+async function runSearch({DOM}) {
+
+    // start
+    setLoadingEnabled(DOM);
+
+    // data
+    const searchQuery = {...getFormValues(DOM)};
+    const resultRaw   = await fetchDataInventory(searchQuery);
+    const result      = filterFetchedRecords(resultRaw);
+
+    // render
+    renderOutputTable(DOM, result);
+
+    // finish
+    setLoadingDisabled(DOM);
+};
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Request Button
+
+function applyRequestButtonAction({button, item}) {
+    button.addEventListener('click', event => {
+        console.group('Request button pressed');
+        console.log('Raw data:', item)
+        console.groupEnd();
+    });
+};
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ UI
+
+function getFormValues(DOM) {
+    return {
+        'country':  DOM['value-country'].value || '',
+        'currency': DOM['value-currency'].value || '',
+    };
+};
+
+function getCheckboxGroupValues(group = '') {
+    return config[group].reduce(
+        (list, item) => {
+            const checkboxId = makeCheckboxId(group, item.key);
+            const checkbox = document.getElementById(checkboxId);
+            return [
+                ...list,
+                ...(checkbox && checkbox.checked
+                    ? [checkbox.value]
+                    : []
+                   ),
+            ];
+        }, []
+    );
+};
+
+function setCheckboxGroupMasterValues(group = '') {
+    const master = document.getElementById(makeCheckboxMasterId(group));
+    config[group].forEach(item => {
+        const checkboxId = makeCheckboxId(group, item.key);
+        const checkbox   = document.getElementById(checkboxId);
+        checkbox.checked = master.checked;
+    });
+    setCheckboxMasterDirtyStatus(group, false);
+};
+
+function setCheckboxMasterDirtyStatus(group = '', isDirty = true) {
+    const master = document.getElementById(makeCheckboxMasterId(group));
+    if (isDirty) master.classList.add('is-dirty');
+    else         master.classList.remove('is-dirty');
+};
+
+function setLoadingEnabled({GeneralWrap}) {
+    GeneralWrap.classList.add('isLoading');
+};
+function setLoadingDisabled({GeneralWrap}) {
+    GeneralWrap.classList.remove('isLoading');
+};
+
+function setActionsDisabledStatus(DOM, isDisabled) {
+    DOM['ButtonRunSearch'].disabled = isDisabled;
+};
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Render Filter
+
+function renderFilterGroup(DOM, GroupKey = '') {
+    config[GroupKey].forEach(item => {
+        const {checkbox, label} = makeCheckboxElements(item, GroupKey);
+        const wrap = document.createElement('div');
+        wrap.classList.add('filter-list-item');
+        wrap.appendChild(checkbox);
+        wrap.appendChild(label);
+        checkbox.addEventListener('change', event => {
+            setCheckboxMasterDirtyStatus(GroupKey, true);
+        });
+        DOM[GroupKey].appendChild(wrap);
+    });
+};
+
+function makeCheckboxElements(
+    item = {},
+    groupKey = ''
+) {
+    const checkbox = document.createElement('input');
+    const checkboxId = makeCheckboxId(groupKey, item.key);
+    checkbox.setAttribute('type', 'checkbox');
+    checkbox.setAttribute('name', checkboxId);
+    checkbox.id = checkboxId;
+    checkbox.value = item.key;
+
+    const label = document.createElement('label');
+    label.setAttribute('for', checkboxId);
+    label.innerHTML = item.label;
+
+    return {checkbox, label};
+};
+
+function makeCheckboxMasterId(groupKey) {
+    return `Master${groupKey}`;
+};
+function makeCheckboxId(groupKey, itemKey) {
+    return `filterbox-${groupKey}-${itemKey}`;
+};
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Render Table
+
+function renderOutputTable(
+    {OutputTable},
+    data = []
+) {
+    const fragment = document.createDocumentFragment();
+    const table    = document.createElement('TABLE');
+    const thead    = document.createElement('THEAD');
+    const tbody    = document.createElement('TBODY');
+    const tfoot    = document.createElement('TFOOT');
+    const {messageTableIsEmpty} = config;
+
+    // table head
+
+    thead.appendChild( makeRowCaption() );
+
+    // table content
+
+    if (data && data.length) {
+        data.forEach(item => {
+            tbody.appendChild( makeRowContent(item) );
+        });
+    } else {
+        tfoot.appendChild( makeRowMessage(messageTableIsEmpty) );
+    }
+
+    // render procedure
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    table.appendChild(tfoot);
+    fragment.appendChild(table);
+    OutputTable.replaceChildren(fragment);
+
+    // finish render
+    return table;
+};
+
+function makeRowCaption() {
+    const row = document.createElement('TR');
+    config.outputColumns.forEach(column => {
+        const cell = document.createElement('TH');
+        cell.classList.add(`valueType-${column.key}`);
+        cell.textContent = column.label;
+        row.appendChild(cell);
+    });
+    return row;
+};
+function makeRowContent(item = {}) {
+    const row = document.createElement('TR');
+    config.outputColumns.forEach(column => {
+        const key  = column.key;
+        const cell = document.createElement('TD');
+        cell.classList.add(`valueType-${key}`);
+        if (typeof column.getValue === 'function') {
+            cell.innerHTML = column.getValue(item);
+        } else if (key === 'action') {
+            cell.appendChild( makeRequestButton(item) );
+        } else {
+            cell.textContent = item[key] || '-';
+        }
+        row.appendChild(cell);
+    });
+    return row;
+};
+function makeRowMessage(message = '') {
+    const row = document.createElement('TR');
+    const cell = document.createElement('TD');
+    cell.setAttribute('colspan', config.outputColumns.length);
+    cell.classList.add('row-message');
+    cell.innerHTML = message;
+    row.appendChild(cell);
+    return row;
+};
+function makeRequestButton(item = {}) {
+    const button = document.createElement('BUTTON');
+    button.id = `row-action-${item.id}`;
+    button.classList.add('request-action');
+    button.dataset.id = item.id;
+    button.innerHTML = config.textRequestButton;
+    applyRequestButtonAction({button, item});
+    return button;
+};
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ End of script
+
+</script>
+
+<script script-dom>
+    const DOM =(
+        extract => list => list.reduce(extract, {})
+    )(
+        (c,key)=>({...c,[key]:document.getElementById(key)})
+    )(
+        [
+            'GeneralWrap',
+            'SectionRequest',
+            'SectionResponse',
+            'OutputTable',
+            'ButtonRunSearch',
+
+            'value-country',
+            'value-currency',
+
+            'MasterFilterProductType',
+            'MasterFilterProductSize',
+            'MasterFilterProductCategory',
+
+            'FilterProductType',
+            'FilterProductSize',
+            'FilterProductCategory',
+        ]
+    );
+</script>
+<script script-controller>
+    startUI(DOM);
+</script>
+
+<!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Style -->
+
+<style style-main>
+/* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Sections */
+
+.GeneralWrap {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.form-actions {
+    padding: 2rem;
+    display: grid;
+    place-items: center;
+}
+.form-actions button {
+    font-size: 2em;
+    padding: 0.25em 0.75em;
+}
+
+.SectionResponse {
+    position: relative;
+    min-height: 9em;
+    margin-bottom: 4rem;
+}
+
+/* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Select */
+
+.SelectArea {
+    display: flex;
+    flex-direction: row;
+    gap: 2em;
+    margin-bottom: 2em;
+}
+
+.select-item label {
+    font-weight: bolder;
+}
+
+.select-item select {
+    padding: 0.25em;
+}
+
+/* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Filter */
+
+.FilterArea {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    grid-gap: 2em;
+}
+.FilterArea input.is-dirty {
+    opacity: 0.69;
+}
+
+.filter-group {
+    padding-bottom: 1em;
+}
+.filter-group-caption {
+    font-weight: bolder;
+    padding-bottom: 0.25em;
+    border-bottom:  1px solid #193c64;
+    margin-bottom:  0.25em;
+}
+.filter-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+}
+.filter-list-item {
+    display: flex;
+    flex-direction: row;
+    gap: 0.25em;
+}
+.filter-list-item input {
+    align-self: start;
+}
+.filter-list-item label {
+    align-self: end;
+}
+
+/* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ OutputTable */
+
+.OutputTable table {
+    width: 100%;
+}
+.OutputTable th {
+    white-space: nowrap;
+}
+.OutputTable th,
+.OutputTable td {
+    padding: 0.5em;
+    text-align: left;
+}
+
+.OutputTable .row-message {
+    text-align: center;
+    background-color: #193c64;
+    color: #fff;
+}
+
+.OutputTable td.valueType-depot,
+.OutputTable td.valueType-depotName {
+    background-color: #ebf2fd;
+    color: #39414f;
+}
+.OutputTable td.valueType-equipmentOptions,
+.OutputTable td.valueType-equipmentName,
+.OutputTable td.valueType-size,
+.OutputTable td.valueType-categoryName {
+    background-color: #193c64;
+    color: #fff;
+}
+.OutputTable td.valueType-available {
+    background-color: #002258;
+    color: #fff;
+}
+
+.OutputTable .valueType-available,
+.OutputTable .valueType-price {
+    text-align: right;
+}
+
+.OutputTable .valueType-price {
+    white-space: nowrap;
+}
+
+.OutputTable .request-action {
+    font-weight: bolder;
+    padding: 0.25em;
+}
+
+
+/* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ LoadingOverlay */
+
+.LoadingOverlay {
+    opacity: 0;
+    pointer-events: none;
+}
+.LoadingOverlay:is(.isLoading .LoadingOverlay) {
+    opacity: 1;
+    pointer-events: all;
+}
+.LoadingOverlay {
+    position: absolute;
+    inset: 0;
+    transition: opacity 300ms ease-in;
+    background-color: hsla(0,0%,96%,0.69);
+}
+.LoadingOverlay:after {
+  --iconSize: 3em;
+    content:  '';
+    position: absolute;
+    z-index:  1;
+    left: calc( 50% - (var(--iconSize)/2) );
+    top:    var(--iconSize);
+    width:  var(--iconSize);
+    height: var(--iconSize);
+    animation: LoadingRotation 1s infinite linear;
+    background-size:  cover;
+    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="%23284d77"%3E%3Cpath d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q17 0 28.5 11.5T520-840q0 17-11.5 28.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-17 11.5-28.5T840-520q17 0 28.5 11.5T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Z"/%3E%3C/svg%3E');
+}
+@keyframes LoadingRotation {
+    from {transform: rotate(0deg);}
+    to   {transform: rotate(359deg);}
+}
+
+/* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ End */
+
+</style>
+
+<!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ End -->
+

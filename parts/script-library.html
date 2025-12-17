@@ -1,0 +1,388 @@
+<!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Scripts Library -->
+
+<script script-library>
+// Version: 2025.12.17.13:00
+// Status: MVP
+
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Fetchers
+
+async function fetchDataInventory(searchQuery = {}) {
+
+    // prepare request
+    const query = new URLSearchParams(searchQuery);
+    const url = `${config.apiUrlBase}inventory?${query}`;
+    const method = 'GET';
+    const headers = {
+        'Content-Type':  'application/json',
+        'Authorization': `Bearer ${config.apiToken}`
+    }
+
+    // fetch data
+    let result = [];
+    try {
+
+        const response = await fetch(url, {method, headers});
+        if (response.ok) {
+            result = await response.json();
+        }
+
+    } catch (error) {
+        console.error(error.message);
+    };
+
+    // finish
+    return result;
+};
+
+function filterFetchedRecords(records = []) {
+    const filterValues = {
+        productGroup: getCheckboxGroupValues('FilterProductType'),
+        size:         getCheckboxGroupValues('FilterProductSize'),
+        baseCategory: getCheckboxGroupValues('FilterProductCategory'),
+    };
+    const filterEnabled = Object.keys(filterValues).reduce(
+        (count, key) => count + filterValues[key].length,
+        0
+    ) > 0;
+
+    // ALL ARE UNCHECKED same as ALL ARE CHECKED for better usability
+    if (!filterEnabled) return records;
+
+    const checkField = (record, key) => {
+        if (!filterValues[key].length) return true; // no filtering
+        if  (filterValues[key].includes(record[key])) return true;
+        else return false;
+    };
+    const checkRecord = (record) => Object.keys(filterValues).reduce(
+        (pass, key) => pass && checkField(record, key)
+        , true
+    );
+    const listReducer = (list, item) => [
+        ...list,
+        ...(checkRecord(item) ? [item] : [])
+    ];
+
+    return [...records].reduce(listReducer, []);
+};
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Controllers
+
+function startUI(DOM) {
+
+    // filters
+
+    renderFilterGroup(DOM, 'FilterProductType');
+    renderFilterGroup(DOM, 'FilterProductSize');
+    renderFilterGroup(DOM, 'FilterProductCategory');
+
+    const {
+        MasterFilterProductType,
+        MasterFilterProductSize,
+        MasterFilterProductCategory,
+    } = DOM;
+
+    MasterFilterProductType.addEventListener('change', event => {
+        setCheckboxGroupMasterValues('FilterProductType');
+    });
+    MasterFilterProductSize.addEventListener('change', event => {
+        setCheckboxGroupMasterValues('FilterProductSize');
+    });
+    MasterFilterProductCategory.addEventListener('change', event => {
+        setCheckboxGroupMasterValues('FilterProductCategory');
+    });
+
+    // main events
+
+    const {
+        ButtonRunSearch,
+        'value-country': SelectCountry,
+    } = DOM;
+
+    SelectCountry.addEventListener('change', event => {
+        setActionsDisabledStatus(DOM, !SelectCountry.value)
+    });
+
+    ButtonRunSearch.addEventListener('click', event => {
+        runSearch({DOM});
+    });
+
+    // initial state
+
+    setActionsDisabledStatus(DOM, true);
+    console.log('All good!')
+
+};
+
+async function runSearch({DOM}) {
+
+    // start
+    setLoadingEnabled(DOM);
+
+    // data
+    const searchQuery = {...getFormValues(DOM)};
+    const resultRaw   = await fetchDataInventory(searchQuery);
+    const result      = filterFetchedRecords(resultRaw);
+
+    // render
+    renderOutputTable(DOM, result);
+
+    // finish
+    setLoadingDisabled(DOM);
+};
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ UI
+
+function getFormValues(DOM) {
+    return {
+        'country':  DOM['value-country'].value || '',
+        'currency': DOM['value-currency'].value || '',
+    };
+};
+
+function getCheckboxGroupValues(group = '') {
+    return config[group].reduce(
+        (list, item) => {
+            const checkboxId = makeCheckboxId(group, item.key);
+            const checkbox = document.getElementById(checkboxId);
+            return [
+                ...list,
+                ...(checkbox && checkbox.checked
+                    ? [checkbox.value]
+                    : []
+                   ),
+            ];
+        }, []
+    );
+};
+
+function setCheckboxGroupMasterValues(group = '') {
+    const master = document.getElementById(makeCheckboxMasterId(group));
+    config[group].forEach(item => {
+        const checkboxId = makeCheckboxId(group, item.key);
+        const checkbox   = document.getElementById(checkboxId);
+        checkbox.checked = master.checked;
+    });
+    setCheckboxMasterDirtyStatus(group, false);
+};
+
+function setCheckboxMasterDirtyStatus(group = '', isDirty = true) {
+    const master = document.getElementById(makeCheckboxMasterId(group));
+    if (isDirty) master.classList.add('is-dirty');
+    else         master.classList.remove('is-dirty');
+};
+
+function setLoadingEnabled({GeneralWrap}) {
+    GeneralWrap.classList.add('isLoading');
+};
+function setLoadingDisabled({GeneralWrap}) {
+    GeneralWrap.classList.remove('isLoading');
+};
+
+function setActionsDisabledStatus(DOM, isDisabled) {
+    DOM['ButtonRunSearch'].disabled = isDisabled;
+};
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Render Filter
+
+function renderFilterGroup(DOM, GroupKey = '') {
+    config[GroupKey].forEach(item => {
+        const {checkbox, label} = makeCheckboxElements(item, GroupKey);
+        const wrap = document.createElement('div');
+        wrap.classList.add('filter-list-item');
+        wrap.appendChild(checkbox);
+        wrap.appendChild(label);
+        checkbox.addEventListener('change', event => {
+            setCheckboxMasterDirtyStatus(GroupKey, true);
+        });
+        DOM[GroupKey].appendChild(wrap);
+    });
+};
+
+function makeCheckboxElements(
+    item = {},
+    groupKey = ''
+) {
+    const checkbox = document.createElement('input');
+    const checkboxId = makeCheckboxId(groupKey, item.key);
+    checkbox.setAttribute('type', 'checkbox');
+    checkbox.setAttribute('name', checkboxId);
+    checkbox.id = checkboxId;
+    checkbox.value = item.key;
+
+    const label = document.createElement('label');
+    label.setAttribute('for', checkboxId);
+    label.innerHTML = item.label;
+
+    return {checkbox, label};
+};
+
+function makeCheckboxMasterId(groupKey) {
+    return `Master${groupKey}`;
+};
+function makeCheckboxId(groupKey, itemKey) {
+    return `filterbox-${groupKey}-${itemKey}`;
+};
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Render Table
+
+function renderOutputTable(
+    {OutputTable},
+    data = []
+) {
+    const fragment = document.createDocumentFragment();
+    const table    = document.createElement('TABLE');
+    const thead    = document.createElement('THEAD');
+    const tbody    = document.createElement('TBODY');
+    const tfoot    = document.createElement('TFOOT');
+    const {messageTableIsEmpty} = config;
+
+    // table head
+
+    thead.appendChild( makeRowCaption() );
+
+    // table content
+
+    if (data && data.length) {
+        data.forEach(item => {
+            tbody.appendChild( makeRowContent(item) );
+        });
+    } else {
+        tfoot.appendChild( makeRowMessage(messageTableIsEmpty) );
+    }
+
+    // render procedure
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    table.appendChild(tfoot);
+    fragment.appendChild(table);
+    OutputTable.replaceChildren(fragment);
+
+    // finish render
+    return table;
+};
+
+function makeRowCaption() {
+    const row = document.createElement('TR');
+    config.outputColumns.forEach(column => {
+        const cell = document.createElement('TH');
+        cell.classList.add(`valueType-${column.key}`);
+        cell.textContent = column.label;
+        row.appendChild(cell);
+    });
+    return row;
+};
+function makeRowContent(item = {}) {
+    const row = document.createElement('TR');
+    config.outputColumns.forEach(column => {
+        const key  = column.key;
+        const cell = document.createElement('TD');
+        cell.classList.add(`valueType-${key}`);
+        if (typeof column.getValue === 'function') {
+            cell.innerHTML = column.getValue(item);
+        } else if (key === 'action') {
+            cell.appendChild( makeRequestButton(item) );
+        } else {
+            cell.textContent = item[key] || '-';
+        }
+        row.appendChild(cell);
+    });
+    return row;
+};
+function makeRowMessage(message = '') {
+    const row = document.createElement('TR');
+    const cell = document.createElement('TD');
+    cell.setAttribute('colspan', config.outputColumns.length);
+    cell.classList.add('row-message');
+    cell.innerHTML = message;
+    row.appendChild(cell);
+    return row;
+};
+
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Contact form
+
+function makeRequestButton(item = {}) {
+    const button = document.createElement('A');
+    const action = document.createElement('SPAN');
+    button.id = `row-action-${item.id}`;
+    button.classList.add('request-action-link');
+    button.dataset.id = item.id;
+    button.href = '#popup:myform';
+
+    action.innerHTML = config.textRequestButton;
+    action.addEventListener('click', event => updateContactFormData(item));
+    button.appendChild(action);
+
+    return button;
+};
+
+function getContactFormDOM() {
+    const rawdata  = document.querySelector('input[name="requestoutput-rawdata"]');
+    const caption  = document.querySelector('input[name="requestoutput-caption"]');
+    const location = document.querySelector('input[name="requestoutput-location"]');
+
+    if (!rawdata || !caption || !location) {
+        console.group('Error: Contact Form DOM');
+        console.log('rawdata:', rawdata);
+        console.log('caption:', caption);
+        console.log('location:', location);
+        console.log('Data fields not found. Contact form may be changed or broken, please check asap.');
+        console.groupEnd();
+    };
+
+    return {
+        rawdata,
+        caption,
+        location,
+    };
+};
+
+function updateContactFormData(item = {}) {
+    const {
+        rawdata,
+        caption,
+        location,
+    } = getContactFormDOM();
+
+    rawdata.value  = JSON.stringify(item);
+    location.value = `${item.depot}, ${item.portName}, ${item.country}`;
+    caption.value  = `${item.equipmentName}, ${item.categoryName}`;
+};
+
+//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ End of script
+
+</script>
+
+<script script-dom>
+    const DOM =(
+        extract => list => list.reduce(extract, {})
+    )(
+        (c,key)=>({...c,[key]:document.getElementById(key)})
+    )(
+        [
+            'GeneralWrap',
+            'SectionRequest',
+            'SectionResponse',
+            'OutputTable',
+            'ButtonRunSearch',
+
+            'value-country',
+            'value-currency',
+
+            'MasterFilterProductType',
+            'MasterFilterProductSize',
+            'MasterFilterProductCategory',
+
+            'FilterProductType',
+            'FilterProductSize',
+            'FilterProductCategory',
+        ]
+    );
+</script>
+<script script-controller>
+    startUI(DOM);
+</script>
+
+<!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ End of Scripts Library -->
