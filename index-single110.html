@@ -7,10 +7,10 @@
         <article class="SelectArea">
 
             <section class="select-item">
-                <label for="value-country">
-                    Port Country<b style="color:red;font-size:larger;display:none;">*</b>
+                <label for="SelectCountry">
+                    Country
                 </label>
-                <select name="country" id="value-country">
+                <select name="country" id="SelectCountry">
                     <option value="AR">Argentina, AR</option>
                     <option value="AU">Australia, AU</option>
                     <option value="AT">Austria, AT</option>
@@ -71,7 +71,16 @@
                 </select>
             </section>
 
-            <section class="select-item">
+            <section class="select-item select-item-location">
+                <label for="SelectLocation">
+                    Location
+                </label>
+                <select name="location" id="SelectLocation">
+                    <option value="" selected>(any location)</option>
+                </select>
+            </section>
+
+            <section class="select-item select-item-currency">
                 <label for="value-currency">
                     Currency
                 </label>
@@ -163,7 +172,7 @@ const config = {
     },
 
     messageTableIsEmpty: 'Nothing found',
-    textRequestButton: 'Request',
+    textRequestButton:   'Request Availability',
 
 };
 
@@ -175,22 +184,25 @@ config.FilterProductType = [
     { key: 'RF', label: 'Refrigerated' },
 ];
 config.FilterProductSize = [
-    { key: '20', label: '20FT' },
-    { key: '20HC', label: '20FT High Cube' },
-    { key: '40', label: '40FT' },
-    { key: '40HC', label: '40FT High Cube' },
-    { key: '40PW', label: '40FT Pallet Wide' },
-    { key: '45HC', label: '45FT High Cube' },
-    { key: '45PW', label: '45FT Pallet Wide' },
+    { key: '20',     label: '20FT Dry Van' },
+    { key: '20HC',   label: '20FT High Cube' },
+    { key: '40',     label: '40FT Dry Van' },
+    { key: '40HC',   label: '40FT High Cube' },
+    { key: '40PW',   label: '40FT Pallet Wide' },
+    { key: '45PW',   label: '45FT Pallet Wide' },
+    { key: '45HC',   label: '45FT High Cube' },
     { key: '45HCPW', label: '45FT High Cube Pallet Wide' },
 ];
 config.FilterProductCategory = [
-    { key: 'IICX', label: 'IICL New' },
     { key: 'IICA', label: 'IICL Used' },
-    { key: 'CWCA', label: 'Cargoworthy' },
-    { key: 'AICU', label: 'As-Is (Ex-Service)' },
+    { key: 'IICX', label: 'IICL New' },
+    { key: 'CWCA_1', label: 'Cargoworthy Premium' },
+    { key: 'CWCA_2', label: 'Cargoworthy Standard' },
+    { key: 'AICU', label: 'Ex Service (ASIS)' },
+    { key: 'AICU-4', label: 'Low to Moderate Damage' },
+    { key: 'AICU-5', label: 'Heavy Damage' },
+    { key: 'AICU-9', label: 'Insulated Only' },
 ];
-
 config.outputColumns = [
 
     // Location
@@ -253,6 +265,7 @@ config.outputColumns = [
 </script>
 <!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ End of Config -->
 
+
 <!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Script -->
 <!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ v1.1.0 -->
 <script script-library>
@@ -287,11 +300,16 @@ async function fetchDataInventory(searchQuery = {}) {
     return result;
 };
 
-function filterFetchedRecords(records = []) {
+function filterFetchedRecords(DOM, records = []) {
+    // get data
+    const {portName} = getFormValues(DOM);
+
+    // combine values
     const filterValues = {
-        productGroup: getCheckboxGroupValues('FilterProductType'),
-        size:         getCheckboxGroupValues('FilterProductSize'),
-        baseCategory: getCheckboxGroupValues('FilterProductCategory'),
+        productGroup:  getCheckboxGroupValues('FilterProductType'),
+        size:          getCheckboxGroupValues('FilterProductSize'),
+        priceCategory: getCheckboxGroupValues('FilterProductCategory'),
+        portName:      portName ? [portName] : [],
     };
     const filterEnabled = Object.keys(filterValues).reduce(
         (count, key) => count + filterValues[key].length,
@@ -316,6 +334,16 @@ function filterFetchedRecords(records = []) {
     ];
 
     return [...records].reduce(listReducer, []);
+};
+
+function filterLocationsList(records = []) {
+    if (!records || !records.length) return [];
+    return records.reduce(
+        (list, item) => [
+            ...list,
+            ...(list.includes(item.portName) ? [] : [item.portName])
+        ], []
+    ).sort();
 };
 
 //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Controllers
@@ -348,11 +376,11 @@ function startUI(DOM) {
 
     const {
         ButtonRunSearch,
-        'value-country': SelectCountry,
+        SelectCountry,
     } = DOM;
 
     SelectCountry.addEventListener('change', event => {
-        setActionsDisabledStatus(DOM, !SelectCountry.value)
+        updateCountryLocations(DOM);
     });
 
     ButtonRunSearch.addEventListener('click', event => {
@@ -360,8 +388,7 @@ function startUI(DOM) {
     });
 
     // initial state
-
-    setActionsDisabledStatus(DOM, true);
+    updateCountryLocations(DOM);
     console.log('All good!')
 
 };
@@ -374,7 +401,7 @@ async function runSearch({DOM}) {
     // data
     const searchQuery = {...getFormValues(DOM)};
     const resultRaw   = await fetchDataInventory(searchQuery);
-    const result      = filterFetchedRecords(resultRaw);
+    const result      = filterFetchedRecords(DOM, resultRaw);
 
     // render
     renderOutputTable(DOM, result);
@@ -387,7 +414,8 @@ async function runSearch({DOM}) {
 
 function getFormValues(DOM) {
     return {
-        'country':  DOM['value-country'].value || '',
+        'country':  DOM['SelectCountry'].value || '',
+        'portName': DOM['SelectLocation'].value || '',
         'currency': DOM['value-currency'].value || '',
     };
 };
@@ -431,8 +459,36 @@ function setLoadingDisabled({GeneralWrap}) {
     GeneralWrap.classList.remove('isLoading');
 };
 
+async function updateCountryLocations(DOM) {
+    const {SelectLocation} = DOM;
+    const optionZero = document.createElement('OPTION');
+    optionZero.value = '';
+    optionZero.selected = true;
+    optionZero.textContent = '(any location)';
+    SelectLocation.replaceChildren(optionZero);
+    SelectLocation.disabled = true;
+    SelectLocation.classList.add('is-loading');
+
+    // data
+    const searchQuery = {...getFormValues(DOM)};
+    const resultRaw   = await fetchDataInventory(searchQuery);
+    const list = filterLocationsList(resultRaw);
+
+    // render
+    list.forEach(location => {
+        const option = document.createElement('OPTION');
+        option.value = location;
+        option.textContent = location;
+        SelectLocation.appendChild(option);
+    });
+
+    // finish
+    SelectLocation.disabled = false;
+    SelectLocation.classList.remove('is-loading');
+};
+
 function setActionsDisabledStatus(DOM, isDisabled) {
-    //DOM['ButtonRunSearch'].disabled = isDisabled;
+  //DOM['ButtonRunSearch'].disabled = isDisabled;
     DOM['ButtonRunSearch'].disabled = false;
 };
 
@@ -620,7 +676,8 @@ function updateContactFormData(item = {}) {
             'OutputTable',
             'ButtonRunSearch',
 
-            'value-country',
+            'SelectCountry',
+            'SelectLocation',
             'value-currency',
 
             'MasterFilterProductType',
@@ -648,7 +705,7 @@ function updateContactFormData(item = {}) {
 .GeneralWrap {
     max-width: 1200px;
     margin: 2em auto;
-    padding: 0 1em;
+    padding: 1em 1em;
     font-family: sans-serif;
 }
 
@@ -679,6 +736,31 @@ function updateContactFormData(item = {}) {
     flex-direction: row;
     gap: 2em;
     margin-bottom: 2em;
+}
+
+.select-item-currency {
+    margin-left: auto;
+    margin-right: 0;
+}
+.select-item-location {
+    position: relative;
+}
+.select-item-location:after {
+  --iconSize: 1em;
+    content:  '';
+    position: absolute;
+    z-index:  1;
+    top:  calc( 50% - (var(--iconSize)/2) );
+    left: calc( 100% + 0.2em );
+    width:  var(--iconSize);
+    height: var(--iconSize);
+    animation: LoadingRotation 1s infinite linear;
+    background-size:  cover;
+    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="%23284d77"%3E%3Cpath d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q17 0 28.5 11.5T520-840q0 17-11.5 28.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-17 11.5-28.5T840-520q17 0 28.5 11.5T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Z"/%3E%3C/svg%3E');
+    display: none;
+}
+.select-item-location:has(select.is-loading):after {
+    display: block;
 }
 
 .select-item label {
@@ -785,6 +867,21 @@ function updateContactFormData(item = {}) {
     padding: 0.25em;
 }
 
+.request-action-link {
+    font-size: smaller;
+    text-decoration: none;
+}
+.request-action-link span {
+    display: block;
+    box-sizing: border-box;
+    width: min-content;
+    text-align: center;
+    border: 1px solid currentColor;
+    padding: 0.25em 0.5em;
+    border-radius: 4px;
+    line-height: 1.2em;
+    text-decoration: none;
+}
 
 /* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ LoadingOverlay */
 
@@ -829,8 +926,8 @@ function updateContactFormData(item = {}) {
 <!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Prototype -->
 <article article-prototype>
     <h2>
-        <a name="#popup:myform"></a>
-        Request form
+        <a name="popup:myform"></a>
+        Request form data
     </h2>
     <fieldset style="display:flex;flex-direction:column;gap:1em;">
         <div>
