@@ -1,5 +1,10 @@
+<html>
+<body>
+<!-- 2026.1.12 -->
+
+
 <!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Markup -->
-<!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ v1.1.0 -->
+<!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ v1.1.12 -->
 <section id="GeneralWrap" class="GeneralWrap">
 
     <section id="SectionRequest" class="SectionRequest">
@@ -155,7 +160,7 @@
 
 
 <!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Config -->
-<!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ v1.1.0 -->
+<!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ v1.1.12 -->
 <script script-config>
 
 const config = {
@@ -261,13 +266,12 @@ config.outputColumns = [
     // End of list
 ];
 
-//~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ End of Config
 </script>
 <!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ End of Config -->
 
 
 <!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Script -->
-<!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ v1.1.0 -->
+<!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ v1.1.12 -->
 <script script-library>
 
 //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Fetchers
@@ -628,23 +632,31 @@ function makeRequestButton(item = {}) {
 };
 
 function getContactFormDOM() {
-    const rawdata  = document.querySelector('input[name="requestoutput-rawdata"]');
-    const caption  = document.querySelector('input[name="requestoutput-caption"]');
-    const location = document.querySelector('input[name="requestoutput-location"]');
+    const caption  = document.querySelector('input[name="Caption"]');
+    const location = document.querySelector('input[name="Location"]');
+    const price    = document.querySelector('input[name="ConwayPrice"]');
 
-    if (!rawdata || !caption || !location) {
-        console.group('Error: Contact Form DOM');
-        console.log('rawdata:', rawdata);
-        console.log('caption:', caption);
-        console.log('location:', location);
-        console.log('Data fields not found. Contact form may be changed or broken, please check asap.');
-        console.groupEnd();
+    const rawdata = {
+        price:
+            document.querySelector('input[name="TritonPrice"]'),
+        allowBooking:
+            document.querySelector('input[name="AllowBooking"]'),
+        missingResaleCertificate:
+            document.querySelector('input[name="MissingResaleCertificate"]'),
+        inventoryCapped:
+            document.querySelector('input[name="InventoryCapped"]'),
+        requireExportDeclaration:
+            document.querySelector('input[name="RequireExportDeclaration"]'),
+        available:
+            document.querySelector('input[name="Available"]'),
+
     };
 
     return {
         rawdata,
         caption,
         location,
+        price,
     };
 };
 
@@ -653,11 +665,18 @@ function updateContactFormData(item = {}) {
         rawdata,
         caption,
         location,
+        price,
     } = getContactFormDOM();
 
-    rawdata.value  = JSON.stringify(item);
     location.value = `${item.depot}, ${item.portName}, ${item.country}`;
     caption.value  = `${item.equipmentName}, ${item.categoryName}`;
+    price.value    = `${config.updatePrice(item.price)} ${item.currency}`;
+    rawdata.price.value = `${item.price} ${item.currency}`;
+    rawdata.available.value = item.available;
+    rawdata.allowBooking.value = item.allowBooking;
+    rawdata.missingResaleCertificate.value = item.missingResaleCertificate;
+    rawdata.inventoryCapped.value = item.inventoryCapped;
+    rawdata.requireExportDeclaration.value = item.requireExportDeclaration;
 };
 
 //~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ End of script
@@ -697,7 +716,7 @@ function updateContactFormData(item = {}) {
 
 
 <!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Styles -->
-<!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ v1.1.0 -->
+<!-- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ v1.1.12 -->
 <style style-main>
 
 /* ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ Sections */
@@ -706,7 +725,7 @@ function updateContactFormData(item = {}) {
     max-width: 1200px;
     margin: 2em auto;
     padding: 1em 1em;
-    font-family: sans-serif;
+    font-family: 'Geologica',Arial,sans-serif;
 }
 
 .form-actions {
@@ -721,8 +740,7 @@ function updateContactFormData(item = {}) {
 
 .SectionResponse {
     position: relative;
-    min-height: 9em;
-    margin-bottom: 4rem;
+    min-height: 6em;
 }
 
 .OutputTable {
@@ -930,14 +948,18 @@ function updateContactFormData(item = {}) {
         Request form data
     </h2>
     <fieldset style="display:flex;flex-direction:column;gap:1em;">
-        <div>
-            <input type="text" name="requestoutput-location">
-        </div>
-        <div>
-            <input type="text" name="requestoutput-caption">
-        </div>
-        <div>
-            <input type="text" name="requestoutput-rawdata">
-        </div>
+        <div><input type="text" name="Caption"></div>
+        <div><input type="text" name="Location"></div>
+        <div><input type="text" name="ConwayPrice"></div>
+        <div><input type="text" name="TritonPrice"></div>
+        <div><input type="text" name="Available"></div>
+        <div><input type="text" name="AllowBooking"></div>
+        <div><input type="text" name="MissingResaleCertificate"></div>
+        <div><input type="text" name="InventoryCapped"></div>
+        <div><input type="text" name="RequireExportDeclaration"></div>
     </fieldset>
 </article>
+
+
+</body>
+</html>
